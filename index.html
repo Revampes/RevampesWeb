@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main | Revampes</title>
+    <link rel="stylesheet" href="assets/css/particle-bg.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/loader.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="page-loader">
+        <div class="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <h2>Loading...</h2>
+        </div>
+    </div>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-code"></i>
+            <span class="main-name">Revampes</span>
+        </a>
+        <div class="nav-links">
+            <a href="about.html" class="nav-link">About</a>
+            <span class="separator">/</span>
+            <a href="project.html" class="nav-link">Projects</a>
+            <span class="separator">/</span>
+            <a href="aftertimefault.html" class="nav-link active">AfterTimeFault</a>
+            <span class="separator">/</span>
+            <a href="equipments.html" class="nav-link">Equipments</a>
+            <span class="separator">/</span>
+            <a href="contacts.html" class="nav-link">Contacts</a>
+        </div>
+        <button id="theme-toggle" class="theme-toggle">
+            <i class="fas fa-sun"></i>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Open navigation" style="display:none">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+<div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close" aria-label="Close navigation">
+        <i class="fas fa-times"></i>
+    </button>
+    <a href="about.html" class="nav-link">About</a>
+    <span class="separator">/</span>
+    <a href="project.html" class="nav-link">Projects</a>
+    <span class="separator">/</span>
+    <a href="aftertimefault.html" class="nav-link active">AfterTimeFault</a>
+    <span class="separator">/</span>
+    <a href="equipments.html" class="nav-link">Equipments</a>
+    <span class="separator">/</span>
+    <a href="contacts.html" class="nav-link">Contacts</a>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<main class="page-content">
+    <section class="hero animate-in">
+        <canvas id="particleCanvas" class="particle-bg"></canvas>
+        <div class="neon-effect"></div>
+        <div class="typing-container">
+            <h1 class="main-title" id="typing-title"></h1>
+            <p class="sub-title" id="typing-subtitle"></p>
+            <p class="location" id="typing-location"><i class="fas fa-map-marker-alt"></i> <span></span></p>
+            <div class="intro" id="typing-intro">
+                <p></p>
+                <p></p>
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+    <section class="about animate-in">
+        <h2>About Me</h2>
+        <div class="about-grid">
+            <div class="about-box">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Studying in</h3>
+                <p>University Year 1</p>
+            </div>
+            <div class="about-box">
+                <i class="fas fa-code"></i>
+                <h3>I do</h3>
+                <p>Java, Sports, Web design, Go</p>
+            </div>
+            <div class="about-box">
+                <i class="fas fa-globe"></i>
+                <h3>Appear in</h3>
+                <p>Discord, GitHub</p>
+            </div>
+            <div class="about-box">
+                <i class="fas fa-heart"></i>
+                <h3>Like</h3>
+                <p>Everything that is not related to code</p>
+            </div>
+        </div>
+    </section>
+    <section class="skills animate-in">
+        <h2>Technical Skills</h2>
+        <div class="skills-container">
+            <div class="skills-slider">
+                <a href="/python" class="skill-btn">Python</a>
+                <a href="/java" class="skill-btn">Java</a>
+                <a href="/c" class="skill-btn">C</a>
+                <a href="/cpp" class="skill-btn">C++</a>
+                <a href="/javascript" class="skill-btn">JavaScript</a>
+                <a href="/minecraft" class="skill-btn">Minecraft</a>
+                <a href="/python" class="skill-btn">Python</a>
+                <a href="/java" class="skill-btn">Java</a>
+                <a href="/c" class="skill-btn">C</a>
+                <a href="/cpp" class="skill-btn">C++</a>
+                <a href="/javascript" class="skill-btn">JavaScript</a>
+                <a href="/minecraft" class="skill-btn">Minecraft</a>
+                <!-- Duplicate for seamless marquee -->
+                <a href="/python" class="skill-btn">Python</a>
+                <a href="/java" class="skill-btn">Java</a>
+                <a href="/c" class="skill-btn">C</a>
+                <a href="/cpp" class="skill-btn">C++</a>
+                <a href="/javascript" class="skill-btn">JavaScript</a>
+                <a href="/minecraft" class="skill-btn">Minecraft</a>
+                <a href="/python" class="skill-btn">Python</a>
+                <a href="/java" class="skill-btn">Java</a>
+                <a href="/c" class="skill-btn">C</a>
+                <a href="/cpp" class="skill-btn">C++</a>
+                <a href="/javascript" class="skill-btn">JavaScript</a>
+                <a href="/minecraft" class="skill-btn">Minecraft</a>
+            </div>
+        </div>
+    </section>
+    <section class="contact animate-in">
+        <h2>Contact Me</h2>
+        <div class="contact-grid">
+            <div class="contact-item">
+                <i class="fab fa-discord"></i>
+                <p>@revampes</p>
+            </div>
+            <div class="contact-item">
+                <i class="fab fa-github"></i><br>
+                <a href="https://github.com/Revampes" target="_blank">Revampes</a>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-gamepad"></i>
+                <p>AfterTime & Revampes</p>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="footer animate-in">
+    <p>Copyright Observed by Revampes © 2025</p>
+    <p>Build with HTML5, CSS & JavaScript</p>
+</footer>
+<script src="assets/javascript/particle-bg.js"></script>
+<script src="assets/javascript/index.js"></script>
+</body>
+</html>
