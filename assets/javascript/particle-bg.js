@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 粒子背景功能
-    const canvas = document.getElementById('projectParticleCanvas') || document.getElementById('particleCanvas');
+    const canvas = document.getElementById('projectParticleCanvas') || document.getElementById('aboutParticleCanvas') || document.getElementById('particleCanvas');
     if (!canvas) return; // If no canvas found, do nothing
     const ctx = canvas.getContext('2d');
     const hero = canvas.parentElement;

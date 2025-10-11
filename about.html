@@ -3,8 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title>About | Revampes</title>
+    <link rel="stylesheet" href="assets/css/particle-bg.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/loader.css">
+    <link rel="stylesheet" href="assets/css/about.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="about-page">
 
+<div id="page-loader">
+    <div class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <h2>Loading...</h2>
+    </div>
+</div>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-code"></i>
+            <span class="main-name">Revampes</span>
+        </a>
+        <div class="nav-links">
+            <a href="about.html" class="nav-link active">About</a>
+            <span class="separator">/</span>
+            <a href="project.html" class="nav-link">Projects</a>
+            <span class="separator">/</span>
+            <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+            <span class="separator">/</span>
+            <a href="equipments.html" class="nav-link">Equipments</a>
+            <span class="separator">/</span>
+            <a href="contacts.html" class="nav-link">Contacts</a>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-sun"></i>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Open navigation" style="display:none">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+<div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close" aria-label="Close navigation">
+        <i class="fas fa-times"></i>
+    </button>
+    <a href="about.html" class="nav-link active">About</a>
+    <span class="separator">/</span>
+    <a href="project.html" class="nav-link">Projects</a>
+    <span class="separator">/</span>
+    <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+    <span class="separator">/</span>
+    <a href="equipments.html" class="nav-link">Equipments</a>
+    <span class="separator">/</span>
+    <a href="contacts.html" class="nav-link">Contacts</a>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Particle background and neon heading -->
+<div class="header-image-container about-header-canvas">
+    <div class="about-header-canvas-wrapper fade-in neon-hero">
+        <canvas id="aboutParticleCanvas" class="particle-bg"></canvas>
+        <div class="neon-effect"></div>
+        <div class="about-header-title">About Me</div>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="about-container">
+    <div class="about-box">
+        <h2>Who am I?</h2>
+        <p>Hello, fellow internet wanderers! I go by Revampes, though many refer to me as AfterTime, and my oldest moniker, TryToFly, seems to have a nostalgic charm. I'm currently at the sprightly age of 18, I’ve mastered the art of Java and JavaScript, while simultaneously navigating and learning the vast oceans of front-end design with Next.js, React, and Vue. I must admit, the back-end is a realm I’m decidedly not fond of.</p>
+        <p>Beyond the digital domain, I’m on a quest to experience an array of sports. Apparently, there are around 8,000 indigenous sports worldwide. Make money first..</p>
+        <p>And yes, I play Go, yes, Go..</p>
+        <h2>About this page</h2>
+        <p>To be honest, I don't exactly know why I construct this website. Well..<br>
+        This website is built with HTML5, CSS and javascript</p>
+    </div>
+</div>
+
+<script src="assets/javascript/particle-bg.js"></script>
+<script src="assets/javascript/about.js"></script>
 </body>
 </html>

@@ -1,0 +1,161 @@
+/* About page custom styles */
+
+.about-header {
+    position: relative;
+    width: 100%;
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+/* Add top padding to the whole about page to push content below navbar */
+.about-page {
+    padding-top: 80px;
+}
+
+@media (max-width: 700px) {
+    .about-page {
+        padding-top: 56px;
+    }
+}
+
+.header-image-container.about-header-canvas {
+    min-height: 400px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+    padding-top: 0; /* Remove redundant padding from hero section */
+}
+
+.about-page .header-image-container.about-header-canvas {
+    padding-top: 80px;
+}
+
+.about-header-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: 500px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#particle-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#aboutParticleCanvas.particle-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.neon-effect {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--neon-color) 0%, transparent 70%);
+    filter: blur(100px);
+    opacity: 0.3;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.about-neon {
+    position: relative;
+    z-index: 1;
+    font-size: 3rem;
+    color: var(--neon-color);
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow:
+        0 0 8px var(--neon-color),
+        0 0 16px var(--neon-color),
+        0 0 32px var(--neon-color),
+        0 0 64px var(--neon-color, #ff6ec7);
+}
+
+.about-header-title {
+    position: relative;
+    z-index: 2;
+    font-size: 3rem;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow:
+        0 0 8px var(--neon-color),
+        0 0 16px var(--neon-color),
+        0 0 32px var(--neon-color),
+        0 0 64px var(--neon-color, #ff6ec7);
+}
+
+.about-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 3rem;
+}
+
+.about-box {
+    background: var(--box-bg);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 40px 0 var(--neon-color, #ff6ec7, 0.18), 0 2px 8px 0 rgba(0,0,0,0.12);
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 1200px;
+    width: 100%;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    backdrop-filter: blur(6px);
+}
+
+.about-box h2 {
+    color: var(--neon-color);
+    margin-top: 0;
+    margin-bottom: 0.7em;
+    font-size: 1.5rem;
+    text-shadow: 0 0 8px var(--neon-color, #ff6ec7);
+}
+
+@media (max-width: 700px) {
+    .about-header {
+        min-height: 200px;
+    }
+    .header-image-container.about-header-canvas,
+    .about-header-canvas-wrapper {
+        min-height: 200px;
+    }
+    .about-neon,
+    .about-header-title {
+        font-size: 2rem;
+    }
+    .about-box {
+        padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+    }
+    .neon-effect {
+        width: 300px;
+        height: 300px;
+    }
+}

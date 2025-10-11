@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const ogImage = `https://opengraph.githubassets.com/1/${username}/${repo.name}`;
             const avatar = repo.owner && repo.owner.avatar_url ? repo.owner.avatar_url : '';
             card.innerHTML = `
-                <img class="project-image" src="${ogImage}" alt="${repo.name} image" onerror="this.onerror=null;this.src='${avatar}';" style="width:100%;border-radius:10px 10px 0 0;object-fit:cover;max-height:160px;">
+                <img class="project-image" src="${ogImage}" alt="${repo.name} image" onerror="this.onerror=null;this.src='${avatar}';" style="width:100%;border-radius:10px 10px 0 0;object-fit:cover;max-height:160px;filter:brightness(65%)">
                 <div class="project-title">${repo.name}</div>
                 <div class="project-desc">${repo.description ? repo.description : 'No description.'}</div>
                 <div class="project-meta">
