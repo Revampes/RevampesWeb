@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    //
     const username = "Revampes"; // Change to your GitHub username if needed
     const grid = document.getElementById('projects-grid');
     const searchInput = document.getElementById('repo-search');
