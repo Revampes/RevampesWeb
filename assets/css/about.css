@@ -122,12 +122,15 @@
 .about-box {
     background: var(--box-bg);
     border-radius: 1.5rem;
-    box-shadow: 0 10px 40px 0 var(--neon-color, #ff6ec7, 0.18), 0 2px 8px 0 rgba(0,0,0,0.12);
+    /* Remove border and box-shadow */
+    border: none;
+    box-shadow: none;
     padding: 2.5rem 2rem 2rem 2rem;
     max-width: 1200px;
     width: 100%;
     color: var(--text-color);
-    font-size: 1.1rem;
+    font-size: 1.25rem; /* Slightly bigger font size */
+    line-height: 1.6;   /* More gap between lines */
     backdrop-filter: blur(6px);
 }
 
@@ -137,6 +140,11 @@
     margin-bottom: 0.7em;
     font-size: 1.5rem;
     text-shadow: 0 0 8px var(--neon-color, #ff6ec7);
+}
+
+.about-box p {
+    margin-bottom: 0.6em; /* Reduce gap between paragraphs */
+    white-space: pre-line; /* Allow "." to break lines if replaced in HTML */
 }
 
 @media (max-width: 700px) {

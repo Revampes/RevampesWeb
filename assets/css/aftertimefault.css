@@ -559,14 +559,14 @@ body.theme-neon.aftertimefault-page .hero-blur-overlay .hero-tagline { max-width
 }
 .atf-tab { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); color:#cfd6ff; padding:.65rem 1.05rem; border-radius:10px; cursor:pointer; font-size:1.2rem; letter-spacing:.3px; backdrop-filter:blur(6px); transition:background .18s, color .18s, box-shadow .18s; width: 250px; }
 .atf-tab:hover { background:rgba(255,255,255,0.12); color:#fff; }
-.atf-tab.active { background: var(--neon-color, #ff6ec7); color: #000; box-shadow:0 4px 16px -2px rgba(108,92,231,.6); border-color:rgba(255,255,255,0.12); }
+.atf-tab.active { background: var(--neon-color, #ff6ec7); color: #fff !important; box-shadow: 0 12px 32px 0 var(--neon-color, #ff6ec7), 0 24px 64px 0 #fff3; }
 
 .tab-panels { max-width:1100px; margin:0 auto 3rem; padding:0 1rem; }
 .tab-panel { display:none; animation:fadeUp .4s ease; }
 .tab-panel.active { display:block; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(12px);} to { opacity:1; transform:translateY(0);} }
 
-.panel-inner { background:var(--panel-bg,#1f2130); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:1.4rem 1.6rem 1.7rem; box-shadow:0 8px 32px -10px rgba(0,0,0,.5), inset 0 0 24px -8px rgba(108,92,231,.26); }
+.panel-inner { background:var(--panel-bg,#1f2130); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:1.4rem 1.6rem 1.7rem; box-shadow:0 8px 24px 0 var(--neon-color, #ff6ec7), 0 16px 48px 0 #fff2; }
 .panel-inner h2 { margin-top:0; }
 .overview-feature-list { margin:.9rem 0 0 1.1rem; padding:0; }
 .overview-feature-list li { margin:.35rem 0; }
@@ -779,4 +779,81 @@ body.theme-neon.aftertimefault-page .hero-blur-overlay .hero-tagline { max-width
   background: #fff;
   color: var(--neon-color, #ff6ec7);
   box-shadow: 0 0 24px 4px var(--neon-color, #ff6ec7), 0 0 40px 12px #fff3;
+}
+
+/* Updated panel-inner styles for neon theme */
+.aftertimefault-page .panel-inner {
+  background: #000 !important;
+  border: none !important;
+  border-radius: 18px !important;
+  box-shadow: 0 6px 16px 0 var(--neon-color, #ff6ec7, 0.18), 0 10px 24px 0 #fff1 !important;
+  color: #fff !important;
+  padding: clamp(22px,2.3vw,40px) clamp(22px,2.3vw,44px) !important;
+  position: relative;
+  z-index: 2;
+}
+
+.aftertimefault-page .module-card {
+  background: #000 !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 6px 16px 0 var(--neon-color, #ff6ec7, 0.18), 0 10px 24px 0 #fff1 !important;
+  border-radius: 14px !important;
+  padding: .95rem .95rem 1.05rem !important;
+  position: relative;
+  z-index: 2;
+}
+
+.install-step-container {
+  background: #000 !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+  padding: 1rem 1rem 1.2rem !important;
+  position: relative;
+  z-index: 2;
+}
+
+.dev-card {
+  background: #000 !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+  padding: 1rem 1rem 1.2rem !important;
+  position: relative;
+  z-index: 2;
+}
+
+.aftertimefault-page .filters-panel {
+  background: #000 !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 6px 16px 0 var(--neon-color, #ff6ec7, 0.18), 0 10px 24px 0 #fff1 !important;
+  border-radius: 14px !important;
+  padding: 1rem 1rem 1.25rem !important;
+  position: relative;
+  z-index: 2;
+}
+
+.atf-tab {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff !important;
+  box-shadow: 0 6px 16px 0 var(--neon-color, #ff6ec7, 0.18), 0 10px 24px 0 #fff1;
+  padding: .65rem 1.05rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  letter-spacing: .3px;
+  backdrop-filter: blur(6px);
+  transition: background .18s, color .18s, box-shadow .18s;
+  width: 250px;
+}
+
+.atf-tab.active {
+  background: var(--neon-color, #ff6ec7);
+  color: #fff !important;
+  box-shadow: 0 8px 24px 0 var(--neon-color, #ff6ec7, 0.22), 0 16px 32px 0 #fff2;
 }
