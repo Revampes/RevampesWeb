@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Theme toggle logic
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        const html = document.documentElement;
+        const icon = themeToggle.querySelector('i');
+        if (localStorage.getItem('theme') === 'light') {
+            html.classList.add('light-mode');
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('light-mode');
+            if (html.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                localStorage.setItem('theme', 'dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        });
+    }
 
     // Loader hiding logic
     const loader = document.getElementById('page-loader');

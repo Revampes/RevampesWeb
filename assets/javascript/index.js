@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
-    const html = document.documentElement;
+    const body = document.body;
     const icon = themeToggle.querySelector('i');
 
     if (localStorage.getItem('theme') === 'light') {
-        html.classList.add('light-mode');
+        body.classList.add('light-mode');
         icon.classList.remove('fa-sun');
         icon.classList.add('fa-moon');
     }
 
     themeToggle.addEventListener('click', () => {
-        html.classList.toggle('light-mode');
+        body.classList.toggle('light-mode');
 
-        if (html.classList.contains('light-mode')) {
+        if (body.classList.contains('light-mode')) {
             localStorage.setItem('theme', 'light');
             icon.classList.remove('fa-sun');
             icon.classList.add('fa-moon');

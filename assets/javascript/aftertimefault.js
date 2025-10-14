@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Theme toggle logic
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        const body = document.body;
+        const icon = themeToggle.querySelector('i');
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.add('light-mode');
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            if (body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                localStorage.setItem('theme', 'dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        });
+    }
   /* =========================================================
    * Reveal-on-scroll
    * =======================================================*/

@@ -23,7 +23,7 @@
     transform: translateX(-50%);
     width: calc(100% - 4rem);
     max-width: 1200px;
-    background: #23242a;
+    background: var(--nav-bg); /* Changed from hardcoded color */
     backdrop-filter: blur(10px);
     z-index: 1000;
     padding: 1rem 0;
@@ -90,8 +90,8 @@
 }
 
 html, body {
-    background: #000 !important;
-    color: #fff !important;
+    background: var(--bg-color);
+    color: var(--text-color);
     min-height: 100vh;
     margin: 0;
     padding: 0;

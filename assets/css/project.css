@@ -231,6 +231,15 @@
     z-index: -1;
 }
 
+.navbar {
+    background: var(--nav-bg); /* Use theme variable for navbar */
+}
+
+.footer {
+    background: var(--nav-bg); /* Use theme variable for footer */
+    color: var(--text-color);
+}
+
 @media (max-width: 900px) {
     .project-container {
         width: 96%;

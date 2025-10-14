@@ -196,7 +196,32 @@
 
 <!-- Shared particles script (targets #projectParticleCanvas or #particleCanvas) -->
 <script src="assets/javascript/particle-bg.js"></script>
-<!-- Page logic (tabs, filters, plus navbar/sidebar/theme + loader helpers) -->
 <script src="assets/javascript/aftertimefault.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        const body = document.body;
+        const icon = themeToggle.querySelector('i');
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.add('light-mode');
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('light-mode');
+            if (body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                localStorage.setItem('theme', 'dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        });
+    }
+});
+</script>
 </body>
 </html>

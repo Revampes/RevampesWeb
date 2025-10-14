@@ -15,6 +15,9 @@
 /* Add top padding to the whole about page to push content below navbar */
 .about-page {
     padding-top: 80px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
 }
 
 @media (max-width: 700px) {
@@ -145,6 +148,58 @@
 .about-box p {
     margin-bottom: 0.6em; /* Reduce gap between paragraphs */
     white-space: pre-line; /* Allow "." to break lines if replaced in HTML */
+}
+
+.navbar {
+    background: var(--nav-bg);
+    color: var(--text-color);
+}
+
+.footer {
+    background: var(--nav-bg);
+    color: var(--text-color);
+}
+
+/* Light mode overrides */
+.light-mode .about-page {
+    --bg-color: #f8f9fb;
+    --text-color: #222;
+    --box-bg: #fff;
+    --nav-bg: #e9e9efcc;
+    --neon-color: #ff6ec7;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.light-mode .about-box {
+    background: var(--box-bg);
+    color: var(--text-color);
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.06);
+}
+
+.light-mode .about-box h2 {
+    color: var(--neon-color);
+    text-shadow: 0 0 8px var(--neon-color, #ff6ec7);
+}
+
+.light-mode .about-header-title,
+.light-mode .about-neon {
+    color: var(--neon-color);
+    text-shadow:
+        0 0 8px var(--neon-color),
+        0 0 16px var(--neon-color),
+        0 0 32px var(--neon-color),
+        0 0 64px var(--neon-color, #ff6ec7);
+}
+
+.light-mode .navbar,
+.light-mode .footer {
+    background: var(--nav-bg);
+    color: var(--text-color);
+}
+
+.light-mode .neon-effect {
+    opacity: 0.18;
 }
 
 @media (max-width: 700px) {

@@ -857,3 +857,38 @@ body.theme-neon.aftertimefault-page .hero-blur-overlay .hero-tagline { max-width
   color: #fff !important;
   box-shadow: 0 8px 24px 0 var(--neon-color, #ff6ec7, 0.22), 0 16px 32px 0 #fff2;
 }
+
+.aftertimefault-page {
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+.navbar {
+    background: var(--nav-bg);
+    color: var(--text-color);
+}
+
+.footer {
+    background: var(--nav-bg);
+    color: var(--text-color);
+}
+
+/* Tab container and tab content styling for theme support */
+.tab-container, .tab-content, .categories-layout, .mod-description-container, .tutorial-container, .features {
+    background: var(--box-bg, rgba(255,255,255,0.05));
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+.tab-btn, .tablinks {
+    background: var(--nav-bg);
+    color: var(--text-color);
+    border: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+.tab-btn.active, .tablinks.active {
+    background: var(--neon-color, #ff6ec7);
+    color: #fff;
+}

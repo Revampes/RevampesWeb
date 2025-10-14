@@ -155,5 +155,27 @@
 </footer>
 <script src="assets/javascript/particle-bg.js"></script>
 <script src="assets/javascript/index.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    const icon = themeToggle.querySelector('i');
+
+    // Restore theme from localStorage
+    if (localStorage.getItem('theme') === 'light') {
+        body.classList.add('light-mode');
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+    }
+
+    themeToggle.addEventListener('click', function() {
+        body.classList.toggle('light-mode');
+        const isLight = body.classList.contains('light-mode');
+        icon.classList.toggle('fa-sun', !isLight);
+        icon.classList.toggle('fa-moon', isLight);
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+});
+</script>
 </body>
 </html>
