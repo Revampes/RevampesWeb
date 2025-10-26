@@ -23,6 +23,20 @@ body {
     flex-direction: column;
     transition: opacity 0.3s;
 }
+
+/* Light mode loader background */
+.light-mode #page-loader {
+    background: #f8f9fb;
+}
+
+.light-mode .loader h2 {
+    color: #222;
+}
+
+.light-mode .loader span {
+    border: 2px solid #ff6ec7;
+}
+
 #page-loader.hidden {
     opacity: 0;
     pointer-events: none;

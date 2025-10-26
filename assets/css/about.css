@@ -18,6 +18,9 @@
     background: var(--bg-color);
     color: var(--text-color);
     transition: background 0.3s, color 0.3s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (max-width: 700px) {
@@ -33,11 +36,12 @@
     display: flex;
     justify-content: center;
     margin-bottom: 32px;
-    padding-top: 0; /* Remove redundant padding from hero section */
+    margin-top: 40px;
+    padding-top: 0;
 }
 
 .about-page .header-image-container.about-header-canvas {
-    padding-top: 80px;
+    padding-top: 0;
 }
 
 .about-header-canvas-wrapper {
@@ -120,6 +124,7 @@
     justify-content: center;
     margin-top: 0;
     margin-bottom: 3rem;
+    flex: 1;
 }
 
 .about-box {
@@ -161,11 +166,11 @@
 }
 
 /* Light mode overrides */
-.light-mode .about-page {
+.light-mode.about-page {
     --bg-color: #f8f9fb;
     --text-color: #222;
     --box-bg: #fff;
-    --nav-bg: #e9e9efcc;
+    --nav-bg: rgba(255, 128, 255, 0.8);
     --neon-color: #ff6ec7;
     background: var(--bg-color);
     color: var(--text-color);

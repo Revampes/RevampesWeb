@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { element: document.querySelector('#typing-intro p:nth-child(3)'), text: 'Minecraft Mod Creator | Web Design | Pixel Draw | Painting | Go player | Sport Lover' },
     ].filter(item => item.element);
 
-    const typingSpeed = 50;
+    const typingSpeed = 35;
     const delayBetweenElements = 500;
 
     function typeWriter(element, text, index, callback) {

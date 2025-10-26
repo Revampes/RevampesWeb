@@ -2,9 +2,109 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacts | Revampes</title>
+
+    <link rel="stylesheet" href="assets/css/loader.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/contact.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div id="page-loader">
+        <div class="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <h2>Loading...</h2>
+        </div>
+    </div>
 
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-code"></i>
+                <span class="main-name">Revampes</span>
+            </a>
+            <div class="nav-links">
+                <a href="about.html" class="nav-link">About</a>
+                <span class="separator">/</span>
+                <a href="project.html" class="nav-link">Projects</a>
+                <span class="separator">/</span>
+                <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+                <span class="separator">/</span>
+                <a href="contacts.html" class="nav-link active">Contacts</a>
+            </div>
+            <button id="theme-toggle" class="theme-toggle">
+                <i class="fas fa-sun"></i>
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="Open navigation" style="display:none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close navigation">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="about.html" class="nav-link">About</a>
+        <span class="separator">/</span>
+        <a href="project.html" class="nav-link">Projects</a>
+        <span class="separator">/</span>
+        <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+        <span class="separator">/</span>
+        <a href="contacts.html" class="nav-link active">Contacts</a>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="page-content contact-page">
+        <div class="contact-container">
+            <div class="header-image-container contact-header-canvas">
+                <div class="contact-header-canvas-wrapper fade-in neon-hero">
+                    <canvas id="contactParticleCanvas" class="particle-bg"></canvas>
+                    <div class="neon-effect"></div>
+                    <div class="contact-header-title">Contact</div>
+                </div>
+            </div>
+
+            <div class="contact-grid-section">
+                <div class="contact-grid" id="contact-grid">
+                    <div class="contact-card">
+                        <i class="fab fa-instagram"></i>
+                        <h3>Instagram</h3>
+                        <a href="https://instagram.com/revampes" target="_blank" rel="noopener">@revampes</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <i class="fab fa-discord"></i>
+                        <h3>Discord</h3>
+                        <p>revampes</p>
+                    </div>
+
+                    <div class="contact-card">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <a href="mailto:contact@revampes.com">contact@revampes.com</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <i class="fab fa-github"></i>
+                        <h3>GitHub</h3>
+                        <a href="https://github.com/Revampes" target="_blank" rel="noopener">@Revampes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer animate-in">
+        <p>Copyright Observed by Revampes © 2025</p>
+        <p>Build with HTML5, CSS & JavaScript</p>
+    </footer>
+
+    <script src="assets/javascript/particle-bg.js"></script>
+    <script src="assets/javascript/index.js"></script>
+    <script src="assets/javascript/contact.js"></script>
 </body>
 </html>

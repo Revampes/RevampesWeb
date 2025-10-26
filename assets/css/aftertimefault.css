@@ -1,6 +1,18 @@
 /* AfterTimeFault specific styles */
 html { scrollbar-gutter: stable both-edges; }
 
+.aftertimefault-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.aftertimefault-page .page-content {
+    flex: 1;
+}
+
 /* Prevent container overflow */
 .mod-description-container, .categories-layout, .tutorial-container, .features {
     max-width: 100%;
@@ -858,37 +870,103 @@ body.theme-neon.aftertimefault-page .hero-blur-overlay .hero-tagline { max-width
   box-shadow: 0 8px 24px 0 var(--neon-color, #ff6ec7, 0.22), 0 16px 32px 0 #fff2;
 }
 
-.aftertimefault-page {
-    background: var(--bg-color);
-    color: var(--text-color);
-    transition: background 0.3s, color 0.3s;
+/* Light mode styles for AfterTimeFault page */
+.light-mode.aftertimefault-page {
+    --bg-color: #f8f9fb;
+    --text-color: #222;
+    --panel-bg: #ffffff;
+    --box-bg: #fff;
+    --nav-bg: rgba(255, 128, 255, 0.8);
 }
 
-.navbar {
-    background: var(--nav-bg);
-    color: var(--text-color);
+.light-mode.aftertimefault-page .atf-tabs {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-.footer {
-    background: var(--nav-bg);
-    color: var(--text-color);
+.light-mode.aftertimefault-page .atf-tab {
+    color: #222;
+    border-bottom: 3px solid transparent;
 }
 
-/* Tab container and tab content styling for theme support */
-.tab-container, .tab-content, .categories-layout, .mod-description-container, .tutorial-container, .features {
-    background: var(--box-bg, rgba(255,255,255,0.05));
-    color: var(--text-color);
-    transition: background 0.3s, color 0.3s;
+.light-mode.aftertimefault-page .atf-tab:hover {
+    background: rgba(255, 110, 199, 0.1);
+    color: #ff6ec7;
 }
 
-.tab-btn, .tablinks {
-    background: var(--nav-bg);
-    color: var(--text-color);
-    border: none;
-    transition: background 0.3s, color 0.3s;
+.light-mode.aftertimefault-page .atf-tab.active {
+    color: #ff6ec7;
+    border-bottom-color: #ff6ec7;
+    background: rgba(255, 110, 199, 0.05);
 }
 
-.tab-btn.active, .tablinks.active {
-    background: var(--neon-color, #ff6ec7);
+.light-mode.aftertimefault-page .tab-panel {
+    background: #ffffff;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .panel-inner {
+    background: #ffffff;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .panel-inner h2,
+.light-mode.aftertimefault-page .panel-inner h3 {
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .panel-inner p,
+.light-mode.aftertimefault-page .panel-inner li {
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .mod-card {
+    background: #ffffff;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .module-button {
+    background: #fff;
+    color: #222;
+    border: 1px solid #e6e9ed;
+}
+
+.light-mode.aftertimefault-page .module-button.active {
+    background: #ff6ec7;
     color: #fff;
+    border-color: #ff6ec7;
+}
+
+.light-mode.aftertimefault-page .module-detail {
+    background: white;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .filters-panel {
+    background: white;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .expandable-box {
+    background: white;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .box-title {
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .content-inner {
+    background: #f8f9fa;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .install-step-container {
+    background: white;
+    color: #222;
+}
+
+.light-mode.aftertimefault-page .dev-card {
+    background: white;
+    color: #222;
 }
