@@ -14,15 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const artProjects = [
         {
-            title: "Cheerful Character",
-            description: "Colorful painted character with joyful expression",
+            title: "魔丸靈珠 中秋version",
+            description: "For fun, and happy mid-autumn festival!",
             image: "assets/images/drawingone.png",
             category: "art",
             tags: ["art", "paint", "character"]
         },
         {   
-            title: "Bamboo Forest Path",
-            description: "Peaceful bamboo forest path with water reflections",
+            title: "Bamboo Forest sketch",
+            description: "A normal piece of sketching",
             image: "assets/images/sketchingone.png",
             category: "art",
             tags: ["art", "sketch", "landscape"]
