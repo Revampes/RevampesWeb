@@ -16,16 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             title: "Bamboo Forest Path",
             description: "Peaceful bamboo forest path with water reflections",
-            image: "assets/images/sketchingone.png",
+            image: "assets/images/drawingone.png",
             category: "art",
-            tags: ["art", "sketch", "character"]
+            tags: ["art", "paint", "landscape"]
         },
         {
             title: "Cheerful Character",
             description: "Colorful painted character with joyful expression",
-            image: "assets/images/drawingone.png",
+            image: "assets/images/sketchingone.png",
             category: "art",
-            tags: ["art", "paint", "landscape"]
+            tags: ["art", "sketch", "character"]
         }
     ];
 
@@ -216,8 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadProjects() {
         try {
+            console.log('Fetching GitHub repos...');
             const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
+            console.log('Response status:', response.status);
             const repos = await response.json();
+            console.log('Repos received:', repos.length);
             
             if (Array.isArray(repos)) {
                 const programmingProjects = await Promise.all(
@@ -242,12 +245,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 programmingProjects.sort((a, b) => b.stars - a.stars);
 
                 allProjects = [...programmingProjects, ...artProjects, ...docProjects];
+                console.log('Total projects:', allProjects.length);
                 renderProjects(allProjects);
             } else {
-                grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;grid-column: 1/-1;">Failed to load projects.</p>';
+                // Handle API errors (rate limit, etc.)
+                console.error('GitHub API Error:', repos);
+                allProjects = [...artProjects, ...docProjects];
+                renderProjects(allProjects);
+                
+                // Show a friendly warning message
+                const warningMsg = document.createElement('p');
+                warningMsg.style.cssText = 'color:var(--neon-color,#ff6ec7);text-align:center;width:100%;grid-column:1/-1;padding:20px;background:rgba(255,110,199,0.1);border-radius:8px;margin-bottom:20px;';
+                const errorMessage = repos.message || 'Unable to load GitHub repositories';
+                warningMsg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${errorMessage}. Showing other projects only.`;
+                grid.insertBefore(warningMsg, grid.firstChild);
             }
         } catch (error) {
-            grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;grid-column: 1/-1;">Failed to load projects.</p>';
+            console.error('Error loading projects:', error);
+            // Still show art and documentation projects even if GitHub API fails
+            allProjects = [...artProjects, ...docProjects];
+            renderProjects(allProjects);
+            
+            // Show a warning message
+            const warningMsg = document.createElement('p');
+            warningMsg.style.cssText = 'color:var(--neon-color,#ff6ec7);text-align:center;width:100%;grid-column:1/-1;padding:20px;background:rgba(255,110,199,0.1);border-radius:8px;margin-bottom:20px;';
+            warningMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories. Showing other projects only.';
+            grid.insertBefore(warningMsg, grid.firstChild);
         }
     }
 
