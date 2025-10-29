@@ -23,6 +23,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Sidebar (hamburger menu) logic
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarClose = document.getElementById('sidebar-close');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.add('open');
+        });
+
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        }
+    }
+
     // Loader hiding logic
     const loader = document.getElementById('page-loader');
     let loaderMinTime = 2000;
