@@ -14,18 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const artProjects = [
         {
-            title: "Bamboo Forest Path",
-            description: "Peaceful bamboo forest path with water reflections",
-            image: "assets/images/drawingone.png",
-            category: "art",
-            tags: ["art", "paint", "landscape"]
-        },
-        {
             title: "Cheerful Character",
             description: "Colorful painted character with joyful expression",
+            image: "assets/images/drawingone.png",
+            category: "art",
+            tags: ["art", "paint", "character"]
+        },
+        {   
+            title: "Bamboo Forest Path",
+            description: "Peaceful bamboo forest path with water reflections",
             image: "assets/images/sketchingone.png",
             category: "art",
-            tags: ["art", "sketch", "character"]
+            tags: ["art", "sketch", "landscape"]
         }
     ];
 
