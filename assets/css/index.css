@@ -2,7 +2,7 @@
     --bg-color: #000;
     --text-color: #fff;
     --neon-color: #ff6ec7;
-    --nav-bg: rgba(0, 0, 0, 0.8);
+    --nav-bg: rgba(255,255,255, 0.05);
     --hover-color: #ccc;
     --box-bg: rgba(255, 255, 255, 0.05);
     --animation-delay-step: 0.2s;
@@ -181,8 +181,7 @@ html, body {
 
 .about {
     padding: 5rem 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .about h2 {
@@ -211,11 +210,6 @@ html, body {
     overflow: visible;
 }
 
-.about-box-glow, .contact-item-glow {
-}
-
-.about-box-glow::before, .contact-item-glow::before {
-}
 
 .about-box, .contact-item {
     position: relative;
@@ -250,7 +244,6 @@ html, body {
 
 .skills {
     padding: 5rem 2rem;
-    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .skills h2 {
@@ -287,8 +280,7 @@ html, body {
 
 .contact {
     padding: 5rem 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .contact h2 {

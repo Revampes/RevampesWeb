@@ -1,65 +1,258 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme toggle is handled globally in index.js to avoid double toggles
-
-    const username = "Revampes"; // Change to your GitHub username if needed
+    const username = "Revampes";
     const grid = document.getElementById('projects-grid');
     const searchInput = document.getElementById('repo-search');
-    let allRepos = [];
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const activeTagsContainer = document.getElementById('active-tags');
+    const imageModal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalClose = document.getElementById('modal-close');
+    
+    let allProjects = [];
+    let currentCategory = 'all';
+    let activeTags = new Set();
 
-    function renderRepos(repos) {
+    const artProjects = [
+        {
+            title: "Bamboo Forest Path",
+            description: "Peaceful bamboo forest path with water reflections",
+            image: "assets/images/sketchingone.png",
+            category: "art",
+            tags: ["art", "sketch", "character"]
+        },
+        {
+            title: "Cheerful Character",
+            description: "Colorful painted character with joyful expression",
+            image: "assets/images/drawingone.png",
+            category: "art",
+            tags: ["art", "paint", "landscape"]
+        }
+    ];
+
+    const docProjects = [
+        {
+            title: "Chemistry DSE Notes",
+            description: "DSE chemistry notes and by topic question from 2012-2024",
+            link: "https://docs.google.com/document/d/14bsq4VLEhD0N4QkLUcIZzEeraZJJ90QBhYkeh5jMXjc/edit?usp=sharing",
+            category: "documentation",
+            tags: ["doc", "chemistry", "education"]
+        }
+    ];
+
+    async function getRepoLanguages(repoName) {
+        try {
+            const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/languages`);
+            const languages = await response.json();
+            return Object.keys(languages);
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function renderProjects(projects) {
         grid.innerHTML = '';
-        if (repos.length === 0) {
-            grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;">No repositories found.</p>';
+        if (projects.length === 0) {
+            grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;grid-column: 1/-1;">No projects found.</p>';
             return;
         }
-        repos.forEach(repo => {
+        projects.forEach(project => {
             const card = document.createElement('div');
             card.className = 'project-card';
-            const ogImage = `https://opengraph.githubassets.com/1/${username}/${repo.name}`;
-            const avatar = repo.owner && repo.owner.avatar_url ? repo.owner.avatar_url : '';
-            card.innerHTML = `
-                <img class="project-image" src="${ogImage}" alt="${repo.name} image" onerror="this.onerror=null;this.src='${avatar}';" style="width:100%;border-radius:10px 10px 0 0;object-fit:cover;max-height:160px;filter:brightness(65%)">
-                <div class="project-title">${repo.name}</div>
-                <div class="project-desc">${repo.description ? repo.description : 'No description.'}</div>
-                <div class="project-meta">
-                    <span><i class="fas fa-code"></i> ${repo.language || 'N/A'}</span>
-                    <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
-                    <span><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
-                </div>
-                <a class="project-link" href="${repo.html_url}" target="_blank" rel="noopener">Go to repository</a>
-            `;
+            
+            if (project.category === 'programming') {
+                card.innerHTML = renderProgrammingCard(project);
+            } else if (project.category === 'art') {
+                card.classList.add('art-card');
+                card.innerHTML = renderArtCard(project);
+            } else if (project.category === 'documentation') {
+                card.innerHTML = renderDocCard(project);
+            }
+            
             grid.appendChild(card);
         });
-    }
 
-    function filterRepos() {
-        const q = searchInput.value.trim().toLowerCase();
-        const filtered = allRepos.filter(repo =>
-            repo.name.toLowerCase().includes(q) ||
-            (repo.description && repo.description.toLowerCase().includes(q))
-        );
-        renderRepos(filtered);
-    }
-
-    searchInput.addEventListener('input', filterRepos);
-
-    // Fetch repositories from GitHub API
-    fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`)
-        .then(res => res.json())
-        .then(data => {
-            if (Array.isArray(data)) {
-                // Sort by stargazers_count descending
-                allRepos = data.sort((a, b) => b.stargazers_count - a.stargazers_count);
-                renderRepos(allRepos);
-            } else {
-                grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;">Failed to load repositories.</p>';
-            }
-        })
-        .catch(() => {
-            grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;">Failed to load repositories.</p>';
+        document.querySelectorAll('.project-tag').forEach(tag => {
+            tag.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleTag(tag.textContent);
+            });
         });
 
-    // Loader hiding logic
+        document.querySelectorAll('.art-card .project-card-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const img = this.querySelector('.project-image');
+                openModal(img.src, img.alt);
+            });
+        });
+    }
+
+    function renderProgrammingCard(project) {
+        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
+        
+        return `
+            <div class="project-card-header">
+                <img class="project-image" src="${project.ogImage}" alt="${project.title} preview" onerror="this.onerror=null;this.src='${project.avatar}';">
+            </div>
+            <div class="project-card-body">
+                <div class="project-title">${project.title}</div>
+                <div class="project-desc">${project.description}</div>
+                <div class="project-tags">${tagsHTML}</div>
+                <div class="project-meta">
+                    <span><i class="fas fa-star"></i> ${project.stars}</span>
+                    <span><i class="fas fa-code-branch"></i> ${project.forks}</span>
+                </div>
+                <a class="project-link" href="${project.link}" target="_blank" rel="noopener">View Repository</a>
+            </div>
+        `;
+    }
+
+    function renderArtCard(project) {
+        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
+        
+        return `
+            <div class="project-card-header">
+                <img class="project-image" src="${project.image}" alt="${project.title}">
+            </div>
+            <div class="project-card-body">
+                <div class="project-title">${project.title}</div>
+                <div class="project-desc">${project.description}</div>
+                <div class="project-tags">${tagsHTML}</div>
+                <button class="project-link" style="border: none; width: 100%; text-align: center;">View Full Image</button>
+            </div>
+        `;
+    }
+
+    function renderDocCard(project) {
+        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
+        
+        return `
+            <div class="project-card-body" style="padding: 24px 20px;">
+                <div class="project-title">${project.title}</div>
+                <div class="project-desc">${project.description}</div>
+                <div class="project-tags">${tagsHTML}</div>
+                <a class="project-link" href="${project.link}" target="_blank" rel="noopener">Open Document</a>
+            </div>
+        `;
+    }
+
+    function filterProjects() {
+        const query = searchInput.value.trim().toLowerCase();
+        
+        let filtered = allProjects;
+
+        if (currentCategory !== 'all') {
+            filtered = filtered.filter(p => p.category === currentCategory);
+        }
+
+        if (activeTags.size > 0) {
+            filtered = filtered.filter(p => 
+                Array.from(activeTags).every(tag => p.tags.includes(tag))
+            );
+        }
+
+        if (query) {
+            filtered = filtered.filter(p =>
+                p.title.toLowerCase().includes(query) ||
+                p.description.toLowerCase().includes(query) ||
+                p.tags.some(tag => tag.toLowerCase().includes(query))
+            );
+        }
+
+        renderProjects(filtered);
+    }
+
+    function toggleTag(tag) {
+        if (activeTags.has(tag)) {
+            activeTags.delete(tag);
+        } else {
+            activeTags.add(tag);
+        }
+        updateActiveTagsDisplay();
+        filterProjects();
+    }
+
+    function updateActiveTagsDisplay() {
+        activeTagsContainer.innerHTML = '';
+        activeTags.forEach(tag => {
+            const badge = document.createElement('span');
+            badge.className = 'tag-badge';
+            badge.innerHTML = `${tag} <i class="fas fa-times"></i>`;
+            badge.addEventListener('click', () => toggleTag(tag));
+            activeTagsContainer.appendChild(badge);
+        });
+    }
+
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategory = btn.dataset.category;
+            filterProjects();
+        });
+    });
+
+    searchInput.addEventListener('input', filterProjects);
+
+    function openModal(src, alt) {
+        modalImage.src = src;
+        modalImage.alt = alt;
+        imageModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        imageModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    imageModal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    async function loadProjects() {
+        try {
+            const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
+            const repos = await response.json();
+            
+            if (Array.isArray(repos)) {
+                const programmingProjects = await Promise.all(
+                    repos.map(async (repo) => {
+                        const languages = await getRepoLanguages(repo.name);
+                        const tags = ['github', ...languages.map(l => l.toLowerCase())];
+                        
+                        return {
+                            title: repo.name,
+                            description: repo.description || 'No description available.',
+                            link: repo.html_url,
+                            ogImage: `https://opengraph.githubassets.com/1/${username}/${repo.name}`,
+                            avatar: repo.owner?.avatar_url || '',
+                            stars: repo.stargazers_count,
+                            forks: repo.forks_count,
+                            category: 'programming',
+                            tags: tags
+                        };
+                    })
+                );
+
+                programmingProjects.sort((a, b) => b.stars - a.stars);
+
+                allProjects = [...programmingProjects, ...artProjects, ...docProjects];
+                renderProjects(allProjects);
+            } else {
+                grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;grid-column: 1/-1;">Failed to load projects.</p>';
+            }
+        } catch (error) {
+            grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;grid-column: 1/-1;">Failed to load projects.</p>';
+        }
+    }
+
+    loadProjects();
+
     const loader = document.getElementById('page-loader');
     let loaderMinTime = 2000;
     let loaderStart = Date.now();

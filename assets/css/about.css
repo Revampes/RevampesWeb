@@ -120,17 +120,15 @@
 
 .about-container {
     width: 100%;
-    display: flex;
+    display: grid;
     justify-content: center;
     margin-top: 0;
     margin-bottom: 3rem;
-    flex: 1;
 }
 
 .about-box {
     background: var(--box-bg);
     border-radius: 1.5rem;
-    /* Remove border and box-shadow */
     border: none;
     box-shadow: none;
     padding: 2.5rem 2rem 2rem 2rem;
@@ -151,6 +149,33 @@
 }
 
 .about-box p {
+    margin-bottom: 0.6em; /* Reduce gap between paragraphs */
+    white-space: pre-line; /* Allow "." to break lines if replaced in HTML */
+}
+
+.about-box-2 {
+    background: var(--bg-color);
+    border-radius: 1.5rem;
+    border: none;
+    box-shadow: none;
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 1200px;
+    width: 100%;
+    color: var(--text-color);
+    font-size: 1.25rem; /* Slightly bigger font size */
+    line-height: 1.6;   /* More gap between lines */
+    backdrop-filter: blur(6px);
+}
+
+.about-box-2 h2 {
+    color: var(--neon-color);
+    margin-top: 0;
+    margin-bottom: 0.7em;
+    font-size: 1.5rem;
+    text-shadow: 0 0 8px var(--neon-color, #ff6ec7);
+}
+
+.about-box-2 p {
     margin-bottom: 0.6em; /* Reduce gap between paragraphs */
     white-space: pre-line; /* Allow "." to break lines if replaced in HTML */
 }

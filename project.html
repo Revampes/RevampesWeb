@@ -64,19 +64,42 @@
             <div class="project-header-canvas-wrapper fade-in neon-hero">
                 <canvas id="projectParticleCanvas" class="particle-bg"></canvas>
                 <div class="neon-effect"></div>
-                <div class="project-header-title">Project</div>
+                <div class="project-header-title">Projects</div>
             </div>
         </div>
+        
+        <!-- Category Filter -->
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="programming">Programming</button>
+            <button class="category-btn" data-category="art">Arts</button>
+            <button class="category-btn" data-category="documentation">Documentation</button>
+        </div>
+
+        <!-- Search Bar -->
         <div class="project-search">
             <div class="search-bar">
-                <input type="text" placeholder="Search repositories..." id="repo-search">
+                <input type="text" placeholder="Search by title, description, or tags..." id="repo-search">
                 <button class="search-btn"><i class="fas fa-search"></i></button>
             </div>
         </div>
+
+        <!-- Active Tags Display -->
+        <div class="active-tags" id="active-tags"></div>
+
         <div class="projects-grid-section">
             <div class="projects-grid" id="projects-grid">
                 <!-- Projects will be inserted here by JavaScript -->
             </div>
+        </div>
+    </div>
+
+    <!-- Image Modal for Arts -->
+    <div class="image-modal" id="image-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+            <img src="" alt="" id="modal-image">
         </div>
     </div>
 </main>
