@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('page-loader');
-    let loaderMinTime = 2000;
+    let loaderMinTime = 1000;
     let loaderStart = Date.now();
 
     function hideLoader() {

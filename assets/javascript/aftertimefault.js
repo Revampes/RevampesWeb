@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Loader hide after minimum duration
   const loader = document.getElementById('page-loader');
-  let loaderMinTime = 1200;
+  let loaderMinTime = 1000;
   let loaderStart = Date.now();
   function hideLoader() {
     const elapsed = Date.now() - loaderStart;

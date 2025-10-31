@@ -211,7 +211,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(65%);
 }
 
 .project-card-body {
@@ -286,6 +285,9 @@
     font-weight: 600;
     transition: background 0.2s, color 0.2s;
     box-shadow: 0 0 8px var(--neon-color, #ff6ec7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .project-link:hover {

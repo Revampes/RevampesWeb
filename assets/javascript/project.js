@@ -98,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="project-desc">${project.description}</div>
                 <div class="project-tags">${tagsHTML}</div>
                 <div class="project-meta">
-                    <span><i class="fas fa-star"></i> ${project.stars}</span>
-                    <span><i class="fas fa-code-branch"></i> ${project.forks}</span>
+                    <span><i class="fas fa-star"></i> ${project.stars} stars</span>
+                    <span><i class="fas fa-code-branch"></i> ${project.forks} forks</span>
                 </div>
                 <a class="project-link" href="${project.link}" target="_blank" rel="noopener">View Repository</a>
             </div>
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="project-title">${project.title}</div>
                 <div class="project-desc">${project.description}</div>
                 <div class="project-tags">${tagsHTML}</div>
-                <button class="project-link" style="border: none; width: 100%; text-align: center;">View Full Image</button>
+                <button src="${project.image}" class="project-link" style="border: none; width: 100%; text-align: center;">View Full Image</button>
             </div>
         `;
     }
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProjects();
 
     const loader = document.getElementById('page-loader');
-    let loaderMinTime = 2000;
+    let loaderMinTime = 1000;
     let loaderStart = Date.now();
 
     function hideLoader() {
