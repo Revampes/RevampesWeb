@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="assets/css/particle-bg.css">
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="assets/css/loader.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -29,7 +30,9 @@
             <span class="separator">/</span>
             <a href="project.html" class="nav-link">Projects</a>
             <span class="separator">/</span>
-            <a href="aftertimefault.html" class="nav-link active">AfterTimeFault</a>
+            <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+            <span class="separator">/</span>
+            <a href="equipments.html" class="nav-link">Equipments</a>
             <span class="separator">/</span>
             <a href="contacts.html" class="nav-link">Contacts</a>
         </div>
@@ -49,7 +52,9 @@
     <span class="separator">/</span>
     <a href="project.html" class="nav-link">Projects</a>
     <span class="separator">/</span>
-    <a href="aftertimefault.html" class="nav-link active">AfterTimeFault</a>
+    <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+    <span class="separator">/</span>
+    <a href="equipments.html" class="nav-link">Equipments</a>
     <span class="separator">/</span>
     <a href="contacts.html" class="nav-link">Contacts</a>
 </div>
@@ -66,8 +71,14 @@
                 <div class="intro" id="typing-intro">
                     <p></p>
                     <p></p>
-                    <p></p>
-                    <p></p>
+                </div>
+                <div class="skill-boxes" id="skill-boxes">
+                    <span class="skill-box">Minecraft Mod Creator</span>
+                    <span class="skill-box">Web Design</span>
+                    <span class="skill-box">Pixel Draw</span>
+                    <span class="skill-box">Painting</span>
+                    <span class="skill-box">Go player</span>
+                    <span class="skill-box">Sport Lover</span>
                 </div>
             </div>
             <div class="hero-image">
@@ -77,27 +88,34 @@
     </section>
 
     <section class="about animate-in">
-        <h2>About Me</h2>
-        <div class="about-grid">
-            <div class="about-box">
-                <i class="fas fa-graduation-cap"></i>
-                <h3>Studying in</h3>
-                <p>University Year 1</p>
+        <div class="about-content-wrapper">
+            <div class="about-left-section">
+                <h2>About Me</h2>
+                <div class="about-cards-grid">
+                    <div class="about-box">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Studying in</h3>
+                        <p>University Year 1</p>
+                    </div>
+                    <div class="about-box">
+                        <i class="fas fa-code"></i>
+                        <h3>I do</h3>
+                        <p>Java, Sports, Web design, Go</p>
+                    </div>
+                    <div class="about-box">
+                        <i class="fas fa-globe"></i>
+                        <h3>Appear in</h3>
+                        <p>Discord, GitHub</p>
+                    </div>
+                    <div class="about-box">
+                        <i class="fas fa-heart"></i>
+                        <h3>Like</h3>
+                        <p>Everything that is not related to code</p>
+                    </div>
+                </div>
             </div>
-            <div class="about-box">
-                <i class="fas fa-code"></i>
-                <h3>I do</h3>
-                <p>Java, Sports, Web design, Go</p>
-            </div>
-            <div class="about-box">
-                <i class="fas fa-globe"></i>
-                <h3>Appear in</h3>
-                <p>Discord, GitHub</p>
-            </div>
-            <div class="about-box">
-                <i class="fas fa-heart"></i>
-                <h3>Like</h3>
-                <p>Everything that is not related to code</p>
+            <div class="about-text">
+                <p>Me Revampes, aka AfterTime or TryToFly, currently 18-year-old Comp Sci newbie diving into coding, especially Python and C++. When not hitting the books, I'm sketching, painting, or playing sports. Right now, I'm working on a portfolio website to show off my projects and skills.</p>
             </div>
         </div>
     </section>
@@ -134,8 +152,13 @@
         </div>
     </section>
     <section class="contact animate-in">
-        <h2>Contact Me</h2>
-        <div class="contact-grid">
+        <div class="contact-content-wrapper">
+            <div class="contact-text">
+                <h2>Contact Me</h2>
+                <p>Don't be shy to find me, because... I may not even reply you :P</p>
+            </div>
+        </div>
+        <div class="contact-cards-grid">
             <div class="contact-item">
                 <i class="fab fa-discord"></i>
                 <p>revampes</p>
@@ -157,27 +180,6 @@
 </footer>
 <script src="assets/javascript/particle-bg.js"></script>
 <script src="assets/javascript/index.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    const icon = themeToggle.querySelector('i');
-
-    // Restore theme from localStorage
-    if (localStorage.getItem('theme') === 'light') {
-        body.classList.add('light-mode');
-        icon.classList.remove('fa-sun');
-        icon.classList.add('fa-moon');
-    }
-
-    themeToggle.addEventListener('click', function() {
-        body.classList.toggle('light-mode');
-        const isLight = body.classList.contains('light-mode');
-        icon.classList.toggle('fa-sun', !isLight);
-        icon.classList.toggle('fa-moon', isLight);
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    });
-});
-</script>
+<script src="assets/javascript/common-utils.js"></script>
 </body>
 </html>

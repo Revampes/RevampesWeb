@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="assets/css/loader.css">
     <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
     <link rel="stylesheet" href="assets/css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -20,42 +21,46 @@
         </div>
     </div>
 
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-code"></i>
-                <span class="main-name">Revampes</span>
-            </a>
-            <div class="nav-links">
-                <a href="about.html" class="nav-link">About</a>
-                <span class="separator">/</span>
-                <a href="project.html" class="nav-link">Projects</a>
-                <span class="separator">/</span>
-                <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
-                <span class="separator">/</span>
-                <a href="contacts.html" class="nav-link active">Contacts</a>
-            </div>
-            <button id="theme-toggle" class="theme-toggle">
-                <i class="fas fa-sun"></i>
-            </button>
-            <button class="hamburger" id="hamburger" aria-label="Open navigation" style="display:none">
-                <i class="fas fa-bars"></i>
-            </button>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-code"></i>
+            <span class="main-name">Revampes</span>
+        </a>
+        <div class="nav-links">
+            <a href="about.html" class="nav-link">About</a>
+            <span class="separator">/</span>
+            <a href="project.html" class="nav-link">Projects</a>
+            <span class="separator">/</span>
+            <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+            <span class="separator">/</span>
+            <a href="equipments.html" class="nav-link">Equipments</a>
+            <span class="separator">/</span>
+            <a href="contacts.html" class="nav-link active">Contacts</a>
         </div>
-    </nav>
-
-    <div class="sidebar" id="sidebar">
-        <button class="sidebar-close" id="sidebar-close" aria-label="Close navigation">
-            <i class="fas fa-times"></i>
+        <button id="theme-toggle" class="theme-toggle">
+            <i class="fas fa-sun"></i>
         </button>
-        <a href="about.html" class="nav-link">About</a>
-        <span class="separator">/</span>
-        <a href="project.html" class="nav-link">Projects</a>
-        <span class="separator">/</span>
-        <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
-        <span class="separator">/</span>
-        <a href="contacts.html" class="nav-link active">Contacts</a>
+        <button class="hamburger" id="hamburger" aria-label="Open navigation" style="display:none">
+            <i class="fas fa-bars"></i>
+        </button>
     </div>
+</nav>
+
+<div class="sidebar" id="sidebar">
+    <button class="sidebar-close" id="sidebar-close" aria-label="Close navigation">
+        <i class="fas fa-times"></i>
+    </button>
+    <a href="about.html" class="nav-link">About</a>
+    <span class="separator">/</span>
+    <a href="project.html" class="nav-link">Projects</a>
+    <span class="separator">/</span>
+    <a href="aftertimefault.html" class="nav-link">AfterTimeFault</a>
+    <span class="separator">/</span>
+    <a href="equipments.html" class="nav-link">Equipments</a>
+    <span class="separator">/</span>
+    <a href="contacts.html" class="nav-link">Contacts</a>
+</div>
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <main class="page-content contact-page">
@@ -106,5 +111,6 @@
     <script src="assets/javascript/particle-bg.js"></script>
     <script src="assets/javascript/index.js"></script>
     <script src="assets/javascript/contact.js"></script>
+    <script src="assets/javascript/common-utils.js"></script>
 </body>
 </html>

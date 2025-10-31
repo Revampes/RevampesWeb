@@ -67,8 +67,9 @@
     transition: color 0.3s ease;
 }
 
-.nav-link:hover {
-    color: var(--hover-color);
+.nav-link:hover,
+.nav-link.active {
+    color: var(--neon-color);
 }
 
 .separator {
@@ -113,6 +114,7 @@ html, body {
     justify-content: center;
     position: relative;
     padding: 2rem;
+    overflow: visible;
 }
 
 .hero-content-wrapper {
@@ -133,7 +135,7 @@ html, body {
     background: radial-gradient(circle, var(--neon-color) 0%, transparent 70%);
     filter: blur(100px);
     opacity: 0.3;
-    z-index: -1;
+    z-index: 0;
 }
 
 .typing-container {
@@ -199,6 +201,41 @@ html, body {
     line-height: 2rem;
 }
 
+.skill-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.skill-boxes.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.skill-box {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    background: var(--box-bg);
+    border: 2px solid var(--neon-color);
+    border-radius: 25px;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 110, 199, 0.2);
+}
+
+.skill-box:hover {
+    background: var(--neon-color);
+    color: #000;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 110, 199, 0.4);
+}
+
 .typing-cursor {
     position: relative;
     display: inline;
@@ -213,14 +250,13 @@ html, body {
     content: "|";
     display: inline-block;
     margin-left: 2px;
-    animation: blink 1s step-end infinite;
     color: var(--neon-color);
     width: 0.6em;
 }
 
-@keyframes blink {
-    from, to { opacity: 1; }
-    50% { opacity: 0; }
+/* Uses .blink animation from animations.css */
+.typing-cursor::after {
+    animation: blink 1s step-end infinite;
 }
 
 .about {
@@ -228,11 +264,45 @@ html, body {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.about h2 {
+.about-content-wrapper {
+    display: flex;
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+.about-left-section {
+    flex: 0 0 auto;
+}
+
+.about-left-section h2 {
     font-size: 2.5rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
+    margin-top: 0;
     color: var(--neon-color);
-    text-align: center;
+    text-align: left;
+}
+
+.about-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.about-text {
+    flex: 1;
+    text-align: left;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    padding: 2rem;
+    max-width: 700px; 
+    margin-top: 225px;
+}
+
+.about-text p {
+    margin: 0;
 }
 
 .about-grid {
@@ -244,14 +314,14 @@ html, body {
 .about-box {
     background: var(--box-bg);
     border: 2px solid var(--neon-color);
-    padding: 2.5rem;
+    padding: 2rem;
     border-radius: 15px;
-    width: 100%;
-    max-width: 300px;
-    box-shadow: 0 10px 30px var(--neon-color, #ff6ec7, 0.2);
+    width: 80%;
+    max-width: 250px;
+    box-shadow: 0 10px 30px rgba(255, 110, 199, 0.05);
     transition: transform 0.3s;
-    margin: 0 auto 2rem auto;
     overflow: visible;
+    text-align: center;
 }
 
 
@@ -313,6 +383,7 @@ html, body {
     animation: skills-marquee 20s linear infinite;
 }
 
+/* Uses marqueeScroll animation from animations.css */
 @keyframes skills-marquee {
     0% {
         transform: translateX(0);
@@ -327,11 +398,39 @@ html, body {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.contact h2 {
+.contact-content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto 3rem auto;
+}
+
+.contact-text {
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.contact-text h2 {
     font-size: 2.5rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
     color: var(--neon-color);
     text-align: center;
+}
+
+.contact-text p {
+    margin: 0;
+}
+
+.contact-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-items: center;
 }
 
 .contact-grid {
@@ -341,9 +440,13 @@ html, body {
 }
 
 .contact-item {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: var(--box-bg);
+    border: 2px solid var(--neon-color);
     padding: 2rem;
-    border-radius: 10px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 250px;
+    box-shadow: 0 10px 30px rgba(255, 110, 199, 0.2);
     text-align: center;
     transition: transform 0.3s ease;
 }
@@ -391,6 +494,43 @@ html, body {
     }
 }
 
+@media (max-width: 1024px) {
+    .about-content-wrapper {
+        gap: 2rem;
+    }
+
+    .about-cards-grid {
+        gap: 1rem;
+    }
+
+    .about-box {
+        max-width: 220px;
+        padding: 1.5rem;
+    }
+
+    .about-text {
+        font-size: 1.1rem;
+        padding: 1.5rem;
+        max-width: 450px;
+    }
+
+    /* Contact section tablet responsive */
+    .contact-cards-grid {
+        gap: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .contact-item {
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .contact-text {
+        font-size: 1.1rem;
+        padding: 1.5rem;
+    }
+}
+
 @media (max-width: 768px) {
     .main-title {
         font-size: 3rem;
@@ -406,8 +546,49 @@ html, body {
         text-align: center;
     }
 
+    .skill-boxes {
+        justify-content: center;
+    }
+
+    .skill-box {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+
     .hero-image {
         max-width: 300px;
+    }
+
+    /* About section responsive */
+    .about-content-wrapper {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .about-left-section {
+        width: 100%;
+    }
+
+    .about-left-section h2 {
+        text-align: center;
+    }
+
+    .about-cards-grid {
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+    }
+
+    .about-box {
+        max-width: 100%;
+    }
+
+    .about-text {
+        text-align: center;
+        padding: 1rem;
+        font-size: 1rem;
+        max-width: 100%;
     }
 
     .nav-links {
@@ -470,13 +651,29 @@ html, body {
     .sidebar.open ~ .sidebar-overlay {
         display: block;
     }
-    .about-grid {
-        grid-template-columns: 1fr;
-    }
     .skills-slider {
         gap: 0.7rem;
         font-size: 0.9rem;
     }
+
+    /* Contact section responsive */
+    .contact-cards-grid {
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+    }
+
+    .contact-item {
+        max-width: 100%;
+    }
+
+    .contact-text {
+        text-align: center;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
     .contact-grid {
         grid-template-columns: 1fr;
         justify-items: center;
@@ -487,6 +684,7 @@ html, body {
         max-width: 350px;
         margin: 0 auto;
     }
+
     .footer {
         padding: 1rem;
         font-size: 0.9rem;
@@ -503,18 +701,7 @@ html, body {
     }
 }
 
-.animate-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-    will-change: opacity, transform;
-}
-
-.animate-in-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
+/* Scroll-triggered animations using classes from animations.css */
 .about.animate-in {
     transition-delay: calc(var(--animation-delay-step) * 1);
 }
@@ -525,6 +712,10 @@ html, body {
 
 .contact.animate-in {
     transition-delay: calc(var(--animation-delay-step) * 3);
+}
+
+.footer.animate-in {
+    transition-delay: calc(var(--animation-delay-step) * 4);
 }
 
 .particle-bg {
@@ -572,43 +763,34 @@ html, body {
     overflow: visible;
 }
 
-/* === Fade-in animation for hero/sections === */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(32px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.fade-in {
-  opacity: 0;
-  animation: fadeInUp 1.1s cubic-bezier(.23,1.01,.32,1) 0.1s forwards;
-}
+/* Uses .fade-in animation from animations.css */
 
-/* === Neon theme for hero/sections === */
+/* Uses neon glow classes from animations.css */
 .neon-hero {
   color: var(--neon-color, #ff6ec7);
-  text-shadow: 0 0 8px var(--neon-color, #ff6ec7), 0 0 24px #fff2, 0 0 40px var(--neon-color, #ff6ec7);
 }
+
 .neon-hero .project-header-title,
 .neon-hero .hero-blur-overlay h1,
 .neon-hero .hero-blur-overlay h2 {
   color: var(--neon-color, #ff6ec7);
-  text-shadow: 0 0 12px var(--neon-color, #ff6ec7), 0 0 32px #fff3, 0 0 48px var(--neon-color, #ff6ec7);
 }
+
 .neon-hero .hero-blur-overlay .hero-tagline,
 .neon-hero .project-header-title {
   color: #fff;
-  text-shadow: 0 0 6px var(--neon-color, #ff6ec7), 0 0 18px #fff2;
 }
+
 .neon-hero .download-btn,
 .neon-hero .search-btn {
   background: var(--neon-color, #ff6ec7);
   color: #fff;
-  box-shadow: 0 0 16px 2px var(--neon-color, #ff6ec7), 0 0 32px 8px #fff2;
   border: none;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
+
 .neon-hero .download-btn:hover,
 .neon-hero .search-btn:hover {
   background: #fff;
   color: var(--neon-color, #ff6ec7);
-  box-shadow: 0 0 24px 4px var(--neon-color, #ff6ec7), 0 0 40px 12px #fff3;
 }

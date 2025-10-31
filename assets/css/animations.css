@@ -1,0 +1,309 @@
+/* =====================================================
+   COMMON ANIMATIONS & REUSABLE UTILITIES
+   Import this file in your HTML to avoid code duplication
+   ===================================================== */
+
+/* === FADE IN ANIMATIONS === */
+
+/* Basic fade in from bottom */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeInUp 1.1s cubic-bezier(.23, 1.01, .32, 1) 0.1s forwards;
+}
+
+/* Fade in with custom delay */
+.fade-in-delay-1 {
+    animation-delay: 0.2s;
+}
+
+.fade-in-delay-2 {
+    animation-delay: 0.4s;
+}
+
+.fade-in-delay-3 {
+    animation-delay: 0.6s;
+}
+
+/* Scroll-triggered fade in */
+.animate-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    will-change: opacity, transform;
+}
+
+.animate-in-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* === BLINK ANIMATION === */
+
+@keyframes blink {
+    from, to {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink 1s step-end infinite;
+}
+
+/* === NEON GLOW EFFECTS === */
+
+.neon-glow {
+    text-shadow: 
+        0 0 8px var(--neon-color, #ff6ec7),
+        0 0 16px var(--neon-color, #ff6ec7),
+        0 0 32px var(--neon-color, #ff6ec7);
+}
+
+.neon-glow-strong {
+    text-shadow:
+        0 0 8px var(--neon-color, #ff6ec7),
+        0 0 16px var(--neon-color, #ff6ec7),
+        0 0 32px var(--neon-color, #ff6ec7),
+        0 0 64px var(--neon-color, #ff6ec7);
+}
+
+.neon-glow-subtle {
+    text-shadow: 
+        0 0 10px var(--neon-color, #ff6ec7),
+        0 0 20px var(--neon-color, #ff6ec7);
+}
+
+/* Neon box shadow */
+.neon-box-shadow {
+    box-shadow: 0 0 16px 2px var(--neon-color, #ff6ec7);
+}
+
+.neon-box-shadow-strong {
+    box-shadow: 
+        0 0 16px 2px var(--neon-color, #ff6ec7),
+        0 0 32px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* === HOVER EFFECTS === */
+
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-10px);
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 24px var(--neon-color, #ff6ec7);
+}
+
+/* === SLIDE ANIMATIONS === */
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+/* === MARQUEE/SCROLL ANIMATIONS === */
+
+@keyframes marqueeScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.marquee {
+    animation: marqueeScroll 20s linear infinite;
+}
+
+/* === ROTATION ANIMATIONS === */
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotate {
+    animation: rotate 2s linear infinite;
+}
+
+.rotate-hover {
+    transition: transform 0.3s ease;
+}
+
+.rotate-hover:hover {
+    transform: rotate(30deg);
+}
+
+/* === PULSE ANIMATIONS === */
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* === SHAKE ANIMATION === */
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* === BOUNCE ANIMATION === */
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-20px);
+    }
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.bounce {
+    animation: bounce 2s ease infinite;
+}
+
+/* === MODAL ANIMATIONS === */
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-in {
+    animation: modalIn 0.32s ease forwards;
+}
+
+/* === UTILITY TRANSITIONS === */
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+.transition-fast {
+    transition: all 0.15s ease;
+}
+
+.transition-slow {
+    transition: all 0.5s ease;
+}
+
+.transition-colors {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.transition-transform {
+    transition: transform 0.3s ease;
+}
+
+.transition-opacity {
+    transition: opacity 0.3s ease;
+}
+
+/* === LOADING SPINNER === */
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* === GRADIENT ANIMATIONS === */
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.gradient-animate {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}

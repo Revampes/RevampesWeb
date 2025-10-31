@@ -126,7 +126,7 @@
     margin-bottom: 3rem;
 }
 
-.about-box {
+.about-box-1 {
     background: var(--box-bg);
     border-radius: 1.5rem;
     border: none;
@@ -140,7 +140,7 @@
     backdrop-filter: blur(6px);
 }
 
-.about-box h2 {
+.about-box-1 h2 {
     color: var(--neon-color);
     margin-top: 0;
     margin-bottom: 0.7em;
@@ -148,7 +148,7 @@
     text-shadow: 0 0 8px var(--neon-color, #ff6ec7);
 }
 
-.about-box p {
+.about-box-1 p {
     margin-bottom: 0.6em; /* Reduce gap between paragraphs */
     white-space: pre-line; /* Allow "." to break lines if replaced in HTML */
 }

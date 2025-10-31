@@ -1,3 +1,5 @@
+// Common utilities (theme, loader) are handled by common-utils.js
+
 document.addEventListener('DOMContentLoaded', () => {
     const username = "Revampes";
     const grid = document.getElementById('projects-grid');
@@ -84,6 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 openModal(img.src, img.alt);
             });
         });
+
+        // Add click handler for "View Full Image" buttons in art cards
+        document.querySelectorAll('.view-full-image-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const imageSrc = this.getAttribute('data-image');
+                const imageAlt = this.getAttribute('data-alt');
+                openModal(imageSrc, imageAlt);
+            });
+        });
+
+        // Initialize scroll animation for project cards
+        initScrollAnimation();
     }
 
     function renderProgrammingCard(project) {
@@ -117,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="project-title">${project.title}</div>
                 <div class="project-desc">${project.description}</div>
                 <div class="project-tags">${tagsHTML}</div>
-                <button src="${project.image}" class="project-link" style="border: none; width: 100%; text-align: center;">View Full Image</button>
+                <button class="project-link view-full-image-btn" data-image="${project.image}" data-alt="${project.title}" style="border: none; width: 100%; text-align: center; cursor: pointer;">View Full Image</button>
             </div>
         `;
     }
@@ -214,6 +229,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Initialize scroll-triggered animation for project cards
+    function initScrollAnimation() {
+        const cards = document.querySelectorAll('.project-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animate-visible')) {
+                    // Calculate delay based on card position in grid
+                    const cardIndex = Array.from(cards).indexOf(entry.target);
+                    const delay = cardIndex * 100; // 100ms delay between each card
+                    
+                    setTimeout(() => {
+                        entry.target.classList.add('animate-visible');
+                    }, delay);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+    }
+
     async function loadProjects() {
         try {
             console.log('Fetching GitHub repos...');
@@ -275,47 +316,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadProjects();
-
-    const loader = document.getElementById('page-loader');
-    let loaderMinTime = 1000;
-    let loaderStart = Date.now();
-
-    function hideLoader() {
-        const elapsed = Date.now() - loaderStart;
-        const delay = Math.max(0, loaderMinTime - elapsed);
-        setTimeout(() => {
-            loader.classList.add('hidden');
-        }, delay);
-    }
-
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        hideLoader();
-    } else {
-        window.addEventListener('DOMContentLoaded', hideLoader);
-    }
-
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    if (themeToggle) {
-        const icon = themeToggle.querySelector('i');
-        if (localStorage.getItem('theme') === 'light') {
-            body.classList.add('light-mode');
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
-
-            if (body.classList.contains('light-mode')) {
-                localStorage.setItem('theme', 'light');
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            } else {
-                localStorage.setItem('theme', 'dark');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            }
-        });
-    }
 });

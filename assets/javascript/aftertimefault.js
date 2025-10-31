@@ -1,27 +1,6 @@
+// Common utilities (theme, sidebar, loader) are handled by common-utils.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme toggle logic
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-        const body = document.body;
-        const icon = themeToggle.querySelector('i');
-        if (localStorage.getItem('theme') === 'light') {
-            body.classList.add('light-mode');
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-        }
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
-            if (body.classList.contains('light-mode')) {
-                localStorage.setItem('theme', 'light');
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            } else {
-                localStorage.setItem('theme', 'dark');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            }
-        });
-    }
   /* =========================================================
    * Reveal-on-scroll
    * =======================================================*/
@@ -274,59 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mod) openModal(mod);
   });
   modal?.querySelector('.modal-close')?.addEventListener('click', closeModal);
-
-  /* =========================================================
-   * Navbar hamburger + sidebar + loader (from main page)
-   * =======================================================*/
-  const hamburger = document.getElementById('hamburger');
-  const sidebar = document.getElementById('sidebar');
-  const sidebarClose = document.getElementById('sidebar-close');
-  const sidebarOverlay = document.getElementById('sidebar-overlay');
-  function handleResize() {
-    if (!hamburger || !sidebar || !sidebarOverlay) return;
-    if (window.innerWidth <= 768) {
-      hamburger.style.display = 'block';
-    } else {
-      hamburger.style.display = 'none';
-      sidebar.classList.remove('open');
-      sidebarOverlay.style.display = 'none';
-    }
-  }
-  window.addEventListener('resize', handleResize);
-  handleResize();
-  hamburger?.addEventListener('click', () => {
-    sidebar.classList.add('open');
-    sidebarOverlay.style.display = 'block';
-  });
-  sidebarClose?.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    sidebarOverlay.style.display = 'none';
-  });
-  sidebarOverlay?.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    sidebarOverlay.style.display = 'none';
-  });
-  sidebar?.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      sidebarOverlay.style.display = 'none';
-    });
-  });
-
-  // Loader hide after minimum duration
-  const loader = document.getElementById('page-loader');
-  let loaderMinTime = 1000;
-  let loaderStart = Date.now();
-  function hideLoader() {
-    const elapsed = Date.now() - loaderStart;
-    const delay = Math.max(0, loaderMinTime - elapsed);
-    setTimeout(() => { loader?.classList.add('hidden'); }, delay);
-  }
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    hideLoader();
-  } else {
-    window.addEventListener('DOMContentLoaded', hideLoader);
-  }
 
   /* =========================================================
    * Init

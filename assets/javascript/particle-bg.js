@@ -1,33 +1,23 @@
+// Common utilities (theme) are handled by common-utils.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = themeToggle.querySelector('i');
-
-    if (localStorage.getItem('theme') === 'light' ||
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-        document.body.classList.add('light-mode');
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-    }
-
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('light-mode');
-
-        if (document.body.classList.contains('light-mode')) {
-            localStorage.setItem('theme', 'light');
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-            updateParticleColors('light');
-        } else {
-            localStorage.setItem('theme', 'dark');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-            updateParticleColors('dark');
-        }
+    // Listen for theme changes from common-utils.js
+    let currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+    
+    window.addEventListener('themeChanged', (e) => {
+        currentTheme = e.detail.theme;
+        updateParticleColors(currentTheme);
     });
 
-    // 粒子背景功能
-    const canvas = document.getElementById('contactParticleCanvas') || document.getElementById('projectParticleCanvas') || document.getElementById('aboutParticleCanvas') || document.getElementById('particleCanvas');
-    if (!canvas) return; // If no canvas found, do nothing
+    // 粒子背景功能 - Find canvas (check particleCanvas first for index page)
+    const canvas = document.getElementById('particleCanvas') || document.getElementById('contactParticleCanvas') || document.getElementById('projectParticleCanvas') || document.getElementById('aboutParticleCanvas');
+    
+    if (!canvas) {
+        console.log('No particle canvas found');
+        return; // If no canvas found, do nothing
+    }
+    
+    console.log('Particle canvas found:', canvas.id);
     const ctx = canvas.getContext('2d');
     const hero = canvas.parentElement;
 
@@ -45,13 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Parent size before resize:', hero.offsetWidth, hero.offsetHeight);
 
     function resizeCanvas() {
-        let w = hero.offsetWidth;
-        let h = hero.offsetHeight;
-        if (w === 0) w = 400;
-        if (h === 0) h = 180;
+        let w = hero.offsetWidth || window.innerWidth;
+        let h = hero.offsetHeight || window.innerHeight;
+        
+        // Ensure minimum size
+        if (w === 0 || w < 100) w = window.innerWidth;
+        if (h === 0 || h < 100) h = window.innerHeight;
+        
         canvas.width = w;
         canvas.height = h;
-        console.log('Canvas resized to:', w, h);
+        console.log('Canvas resized to:', w, 'x', h);
     }
     resizeCanvas();
     window.addEventListener('resize', () => {
@@ -161,6 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 启动效果
+    console.log('Starting particle animation...');
+    console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
+    console.log('Particle count:', particleConfig.count);
     initParticles();
+    console.log('Particles initialized:', particles.length);
     animate();
+    console.log('Animation loop started');
 });
