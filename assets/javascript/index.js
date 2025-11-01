@@ -136,6 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastMonth = -1;
         let monthStartWeek = 0;
         
+        // Calculate box width based on screen size
+        const getBoxWidth = () => {
+            if (window.innerWidth <= 480) return 11; // 8px box + 3px gap
+            if (window.innerWidth <= 768) return 13; // 10px box + 3px gap
+            return 15; // 12px box + 3px gap
+        };
+        
+        const boxWidth = getBoxWidth();
+        
         weeks.forEach((week, weekIndex) => {
             const firstDay = week[0].date;
             const month = firstDay.getMonth();
@@ -147,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const prevLabel = monthsContainer.lastChild;
                     if (prevLabel) {
                         const weekSpan = weekIndex - monthStartWeek;
-                        prevLabel.style.width = `${weekSpan * 15}px`;
+                        prevLabel.style.width = `${weekSpan * boxWidth}px`;
                     }
                 }
                 
@@ -165,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Finalize the last month
         if (monthsContainer.lastChild) {
             const weekSpan = weeks.length - monthStartWeek;
-            monthsContainer.lastChild.style.width = `${weekSpan * 15}px`;
+            monthsContainer.lastChild.style.width = `${weekSpan * boxWidth}px`;
         }
         
         // Create day labels

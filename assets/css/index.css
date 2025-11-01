@@ -114,7 +114,8 @@ html, body {
     justify-content: center;
     position: relative;
     padding: 2rem;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
 
 .hero-content-wrapper {
@@ -143,6 +144,8 @@ html, body {
     text-align: left;
     position: relative;
     z-index: 1;
+    width: 100%;
+    max-width: 100%;
 }
 
 .hero-image {
@@ -198,7 +201,9 @@ html, body {
     margin: 0.8rem 0;
     max-width: 800px;
     min-height: 2rem;
-    line-height: 2rem;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .skill-boxes {
@@ -227,6 +232,9 @@ html, body {
     font-weight: 500;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(255, 110, 199, 0.2);
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
 }
 
 .skill-box:hover {
@@ -283,6 +291,9 @@ html, body {
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Force scrollbar to be visible */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 110, 199, 0.3) rgba(255, 110, 199, 0.1);
 }
 
 /* Scrollbar styling for webkit browsers */
@@ -736,27 +747,81 @@ html, body {
 }
 
 @media (max-width: 768px) {
-    .main-title {
-        font-size: 3rem;
+    .hero {
+        padding: 1rem;
+        overflow: visible;
     }
 
     .hero-content-wrapper {
         flex-direction: column;
         gap: 2rem;
         text-align: center;
+        width: 100%;
+        padding: 0;
     }
 
     .typing-container {
         text-align: center;
+        width: 100%;
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+
+    .main-title {
+        font-size: 2.5rem;
+        min-height: auto;
+    }
+
+    .sub-title {
+        font-size: 1.5rem;
+        min-height: auto;
+    }
+
+    .location {
+        font-size: 1rem;
+        min-height: auto;
+    }
+
+    .intro p {
+        font-size: 1rem;
+        line-height: 1.5;
+        max-width: 100%;
+        min-height: auto;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .skill-boxes {
         justify-content: center;
+        gap: 0.75rem;
+        width: 100%;
     }
 
     .skill-box {
-        font-size: 0.9rem;
-        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        white-space: normal;
+        max-width: calc(50% - 0.5rem);
+        text-align: center;
+        word-break: break-word;
+    }
+
+    .github-contributions {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin-top: 2rem;
+    }
+
+    .contributions-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0 1rem;
+    }
+
+    .contributions-title {
+        font-size: 1.3rem;
     }
 
     .github-contributions {
@@ -775,17 +840,26 @@ html, body {
 
     .contributions-wrapper {
         padding: 1rem;
+        margin: 0;
+        border-radius: 10px;
         /* Ensure horizontal scrolling works on mobile */
-        overflow-x: scroll;
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
     }
 
     .contributions-calendar {
         /* Maintain minimum width for proper calendar display */
-        min-width: 820px;
+        min-width: 720px;
+        width: max-content;
     }
 
     .calendar-months {
         padding-left: 25px;
+        min-width: 720px;
+    }
+
+    .calendar-body {
+        min-width: 720px;
     }
 
     .calendar-grid {
@@ -807,6 +881,7 @@ html, body {
     .contributions-legend {
         font-size: 0.75rem;
         justify-content: center;
+        padding: 0 1rem;
     }
 
     .legend-box {
@@ -837,10 +912,12 @@ html, body {
         width: 100%;
         max-width: 350px;
         margin: 0 auto;
+        gap: 1rem;
     }
 
     .about-box {
         max-width: 100%;
+        width: 100%;
     }
 
     .about-text {
@@ -1056,32 +1133,99 @@ html, body {
 
 /* Extra small devices */
 @media (max-width: 480px) {
+    .hero {
+        padding: 0.5rem;
+        min-height: auto;
+    }
+
+    .typing-container {
+        padding: 0 0.5rem;
+        width: 100%;
+    }
+
+    .main-title {
+        font-size: 2rem;
+        min-height: auto;
+    }
+
+    .sub-title {
+        font-size: 1.2rem;
+        min-height: auto;
+    }
+
+    .location {
+        font-size: 0.9rem;
+        min-height: auto;
+    }
+
+    .intro p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        min-height: auto;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .skill-boxes {
+        gap: 0.5rem;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .skill-box {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+        white-space: normal;
+        word-break: break-word;
+        max-width: calc(50% - 0.25rem);
+        flex: 0 0 auto;
+    }
+
     .github-contributions {
-        margin-top: 2rem;
+        margin-top: 1.5rem;
+        width: 100%;
+        padding: 0;
+    }
+
+    .contributions-header {
+        padding: 0 0.5rem;
     }
 
     .contributions-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .contributions-stats {
+        font-size: 0.8rem;
     }
 
     .contributions-wrapper {
-        padding: 0.75rem;
+        padding: 0.5rem;
+        margin: 0;
+        border-radius: 8px;
         /* Ensure horizontal scrolling works on mobile */
-        overflow-x: scroll;
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
     }
 
     .contributions-calendar {
         /* Maintain minimum width for proper calendar display */
-        min-width: 680px;
+        min-width: 600px;
+        width: max-content;
     }
 
     .calendar-months {
-        padding-left: 20px;
+        padding-left: 18px;
+        min-width: 600px;
+    }
+
+    .calendar-body {
+        min-width: 600px;
     }
 
     .calendar-grid {
         grid-template-rows: repeat(7, 8px);
-        gap: 2px;
+        gap: 3px;
     }
 
     .contribution-day {
@@ -1092,17 +1236,22 @@ html, body {
     .day-label {
         height: 8px;
         line-height: 8px;
-        font-size: 0.6rem;
+        font-size: 0.55rem;
     }
 
     .contributions-legend {
         font-size: 0.7rem;
         flex-wrap: wrap;
         gap: 0.3rem;
+        padding: 0 0.5rem;
     }
 
     .legend-box {
         width: 8px;
         height: 8px;
+    }
+
+    .hero-image {
+        max-width: 250px;
     }
 }
