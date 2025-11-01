@@ -282,6 +282,26 @@ html, body {
     margin-bottom: 1rem;
     overflow-x: auto;
     overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Scrollbar styling for webkit browsers */
+.contributions-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.contributions-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 110, 199, 0.1);
+    border-radius: 10px;
+}
+
+.contributions-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 110, 199, 0.3);
+    border-radius: 10px;
+}
+
+.contributions-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 110, 199, 0.5);
 }
 
 .calendar-loading {
@@ -755,6 +775,17 @@ html, body {
 
     .contributions-wrapper {
         padding: 1rem;
+        /* Ensure horizontal scrolling works on mobile */
+        overflow-x: scroll;
+    }
+
+    .contributions-calendar {
+        /* Maintain minimum width for proper calendar display */
+        min-width: 820px;
+    }
+
+    .calendar-months {
+        padding-left: 25px;
     }
 
     .calendar-grid {
@@ -1035,7 +1066,17 @@ html, body {
 
     .contributions-wrapper {
         padding: 0.75rem;
-        overflow-x: auto;
+        /* Ensure horizontal scrolling works on mobile */
+        overflow-x: scroll;
+    }
+
+    .contributions-calendar {
+        /* Maintain minimum width for proper calendar display */
+        min-width: 680px;
+    }
+
+    .calendar-months {
+        padding-left: 20px;
     }
 
     .calendar-grid {
