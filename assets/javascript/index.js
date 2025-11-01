@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Typing animation (index page only) – guard for missing elements
     const typingElements = [
         { element: document.getElementById('typing-title'), text: 'Revampes' },
-        { element: document.getElementById('typing-subtitle'), text: 'AfterTime' },
+        { element: document.getElementById('typing-subtitle'), text: 'AfterTime || TryToFly' },
         { element: document.querySelector('#typing-location span'), text: 'HKG GMT+8' },
         { element: document.querySelector('#typing-intro p:nth-child(1)'), text: 'Bullshit code creator' },
         { element: document.querySelector('#typing-intro p:nth-child(2)'), text: 'Yes front-end, No back-end, No code, Yes sports, Yes game, Yes draw, Yes chess!' },
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href^="/"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log(`导航到: ${this.getAttribute('href')}`);
+            console.log(`Directed to: ${this.getAttribute('href')}`);
         });
     });
 
