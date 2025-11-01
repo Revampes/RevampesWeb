@@ -476,7 +476,7 @@ html, body {
 
 .about {
     padding: 5rem 2rem;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--box-bg);
 }
 
 .about-content-wrapper {
@@ -603,8 +603,91 @@ html, body {
 .direct-button:hover a {
     color: #000;
 }
+
+/* Projects Preview Section */
+.index-projects-preview {
+    padding: 5rem 2rem;
+    background-color: transparent;
+}
+
+.index-projects-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.index-projects-header h2 {
+    font-size: 2.5rem;
+    color: var(--neon-color);
+    margin: 0;
+}
+
+.index-projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.index-project-card {
+    background: var(--box-bg);
+    border: 2px solid var(--neon-color);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 110, 199, 0.2);
+}
+
+.index-project-card:first-child {
+    grid-row: span 2;
+}
+
+.index-project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 110, 199, 0.4);
+}
+
+.index-project-card h3 {
+    font-size: 1.8rem;
+    color: var(--neon-color);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px var(--neon-color);
+}
+
+.index-project-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.index-project-card ul li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 110, 199, 0.2);
+    color: var(--text-color);
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.index-project-card ul li:last-child {
+    border-bottom: none;
+}
+
+.index-project-card ul li:hover {
+    color: var(--neon-color);
+    padding-left: 0.5rem;
+}
+
+.index-project-card ul li::before {
+    content: "▹ ";
+    color: var(--neon-color);
+    font-weight: bold;
+}
+
 .skills {
     padding: 5rem 2rem;
+    background-color: var(--box-bg);
 }
 
 .skills h2 {
@@ -642,7 +725,7 @@ html, body {
 
 .contact {
     padding: 5rem 2rem;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--bg-color);
 }
 
 .contact-content-wrapper {
@@ -759,6 +842,19 @@ html, body {
         font-size: 1.1rem;
         padding: 1.5rem;
         max-width: 450px;
+    }
+
+    /* Projects preview tablet responsive */
+    .projects-grid {
+        gap: 1.5rem;
+    }
+
+    .project-card {
+        padding: 1.5rem;
+    }
+
+    .project-card h3 {
+        font-size: 1.6rem;
     }
 
     /* Contact section tablet responsive */
@@ -957,6 +1053,24 @@ html, body {
         padding: 1rem;
         font-size: 1rem;
         max-width: 100%;
+    }
+
+    /* Projects preview responsive */
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .project-card:first-child {
+        grid-row: span 1;
+    }
+
+    .project-card h3 {
+        font-size: 1.5rem;
+    }
+
+    .project-card ul li {
+        font-size: 1rem;
     }
 
     .nav-links {
