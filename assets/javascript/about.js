@@ -27,7 +27,7 @@ const skillsData = {
     "Games": [
         { name: "2048", level: 2 },
         { name: "Sudoku", level: 2 },
-        { name: "Go", level: 1 }
+        { name: "Go", level: 0 }
     ]
 };
 

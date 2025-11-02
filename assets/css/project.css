@@ -429,6 +429,25 @@
     color: #fff !important;
     text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
     font-size: 3.5rem;
+    z-index: 2;
+}
+
+.project-doggie-image {
+    position: absolute;
+    right: 10px;
+    bottom: -40px;
+    width: 400px;
+    height: auto;
+    z-index: 2;
+    opacity: 0.9;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    filter: drop-shadow(0 0 20px rgba(255, 110, 199, 0.5));
+}
+
+.project-doggie-image:hover {
+    transform: scale(1.05);
+    opacity: 1;
+    filter: drop-shadow(0 0 30px rgba(255, 110, 199, 0.8));
 }
 
 .neon-effect {
@@ -495,6 +514,16 @@
         width: 35px;
         height: 35px;
         font-size: 1.2rem;
+    }
+    
+    .project-doggie-image {
+        width: 120px;
+        right: 20px;
+        bottom: 20px;
+    }
+    
+    .project-header-title {
+        font-size: 2.5rem;
     }
 }
 
