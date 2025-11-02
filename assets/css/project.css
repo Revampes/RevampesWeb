@@ -439,14 +439,12 @@
     width: 400px;
     height: auto;
     z-index: 2;
-    opacity: 0.9;
     transition: transform 0.3s ease, opacity 0.3s ease;
     filter: drop-shadow(0 0 20px rgba(255, 110, 199, 0.5));
 }
 
 .project-doggie-image:hover {
     transform: scale(1.05);
-    opacity: 1;
     filter: drop-shadow(0 0 30px rgba(255, 110, 199, 0.8));
 }
 
