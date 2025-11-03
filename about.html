@@ -10,8 +10,15 @@
     <link rel="stylesheet" href="assets/css/loader.css">
     <link rel="stylesheet" href="assets/css/animations.css">
     <link rel="stylesheet" href="assets/css/about.css">
+    <link rel="stylesheet" href="assets/css/analytics.css">
     <link rel="stylesheet" href="assets/css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="https://cdn.vercel-analytics.com/v1/script.js"></script>
 </head>
 <body class="about-page">
 
@@ -142,6 +149,16 @@
         </div>
     </div>
 
+    <!-- Website Analytics Section -->
+    <div class="container">
+        <h2><i class="fas fa-chart-line"></i> Website Analytics</h2>
+        <div id="analytics-display">
+            <p style="text-align: center; color: var(--text-color); opacity: 0.7;">
+                <i class="fas fa-spinner fa-spin"></i> Loading analytics data...
+            </p>
+        </div>
+    </div>
+
     </div>
 </div>
 
@@ -152,6 +169,8 @@
 </footer>
 
 <script src="assets/javascript/particle-bg.js"></script>
+<script src="assets/javascript/analytics.js"></script>
+<script src="assets/javascript/analytics-display.js"></script>
 <script src="assets/javascript/about.js"></script>
 <script src="assets/javascript/common-utils.js"></script>
 </body>
