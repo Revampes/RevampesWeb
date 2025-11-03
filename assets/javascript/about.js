@@ -31,46 +31,46 @@ const skillsData = {
     ]
 };
 
-// Create skill elements with box-based display
+// Create skill elements with dash-based display
 function createSkillElements() {
     const categories = document.querySelectorAll('.category');
-    console.log('Found categories:', categories.length);
+    console.log('🔍 Found categories:', categories.length);
     
     categories.forEach(category => {
-        const categoryName = category.querySelector('h2').textContent;
+        const categoryName = category.querySelector('h2').textContent.trim();
         const skillsContainer = category.querySelector('.skills-container');
         const skills = skillsData[categoryName];
         
-        console.log('Category:', categoryName, 'Skills:', skills);
+        console.log('📂 Category:', categoryName, '| Skills found:', skills ? skills.length : 0);
         
-        if (skills) {
+        if (skills && skillsContainer) {
+            // Clear any existing content
+            skillsContainer.innerHTML = '';
+            
             skills.forEach((skill, index) => {
                 const skillElement = document.createElement('div');
                 skillElement.className = 'skill';
                 
-                // Create dash-based level display
-                let levelDisplay = '';
-                for (let i = 0; i < skill.level; i++) {
-                    levelDisplay += '─';  // Filled dash
-                }
-                for (let i = skill.level; i < 5; i++) {
-                    levelDisplay += '─';  // Empty dash (lighter color via CSS)
-                }
+                // Use heavier Unicode dash character for better visibility
+                const filledDashes = '━'.repeat(skill.level);
+                const emptyDashes = '━'.repeat(5 - skill.level);
                 
                 skillElement.innerHTML = `
                     <div class="skill-name">${skill.name}</div>
                     <div class="skill-level-bar">
-                        <span class="filled-dashes">${'─'.repeat(skill.level)}</span><span class="empty-dashes">${'─'.repeat(5 - skill.level)}</span>
+                        <span class="filled-dashes">${filledDashes}</span><span class="empty-dashes">${emptyDashes}</span>
                     </div>
                 `;
-                // Add staggered delay for each skill in category
+                
                 skillElement.style.animationDelay = `${index * 0.1}s`;
                 skillsContainer.appendChild(skillElement);
-                console.log('Added skill:', skill.name, 'Level:', skill.level);
+                console.log(`✅ Added: ${skill.name} | Level: ${skill.level} | Filled: "${filledDashes}" | Empty: "${emptyDashes}"`);
             });
+        } else {
+            console.warn(`⚠️ Issue with category: ${categoryName} | Skills: ${skills ? 'found' : 'NOT FOUND'} | Container: ${skillsContainer ? 'found' : 'NOT FOUND'}`);
         }
     });
-    console.log('Finished creating all skills');
+    console.log('✨ Finished creating all skills');
 }
 
 // Animate boxes when they come into view
