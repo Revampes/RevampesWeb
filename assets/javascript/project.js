@@ -18,14 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             title: "魔丸靈珠 中秋version",
             description: "For fun, and happy mid-autumn festival!",
-            image: "assets/images/drawingone.png",
+            image: "../images/drawingone.png",
             category: "art",
             tags: ["art", "paint", "character"]
         },
         {   
             title: "Bamboo Forest sketch",
             description: "A normal piece of sketching",
-            image: "assets/images/sketchingone.png",
+            image: "../images/sketchingone.png",
             category: "art",
             tags: ["art", "sketch", "landscape"]
         }
