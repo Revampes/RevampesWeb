@@ -170,6 +170,11 @@ body {
     position: relative;
     z-index: 2;
     text-align: center;
+    pointer-events: none;
+}
+
+.hero-content > * {
+    pointer-events: auto;
 }
 
 .hero-title {

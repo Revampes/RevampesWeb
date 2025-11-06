@@ -89,8 +89,13 @@ function animateSkillsOnScroll() {
             const boxes = skill.querySelectorAll('.skill-box.filled');
             boxes.forEach((box, boxIndex) => {
                 setTimeout(() => {
-                    box.classList.add('animate-fill');
-                }, index * 100 + boxIndex * 150); // Staggered box animation
+                box.classList.add('animate-fill');
+                    // Add progress bar animation
+                    const progressBar = box.querySelector('.skill-progress-fill');
+                    if (progressBar) {
+                        progressBar.style.setProperty('--progress', box.dataset.progress);
+                    }
+                }, index * 100 + boxIndex * 150);
             });
             
             // Add glow effect for high skills (4+ boxes)
@@ -117,3 +122,4 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('scroll', animateSkillsOnScroll);
 // Also check on resize
 window.addEventListener('resize', animateSkillsOnScroll);
+

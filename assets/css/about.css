@@ -96,7 +96,6 @@
     width: 100%;
     height: 100%;
     z-index: 0;
-    pointer-events: none;
 }
 
 .neon-effect {
@@ -140,6 +139,7 @@
         0 0 16px var(--neon-color),
         0 0 32px var(--neon-color),
         0 0 64px var(--neon-color, #ff6ec7);
+    pointer-events: none;
 }
 
 .about-container {
@@ -674,4 +674,24 @@
     .skill-name {
         font-size: 0.85rem;
     }
+}
+
+/* Add to about.css */
+.skill-progress {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.skill-progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--neon-color);
+    transition: width 1s ease-out;
+    box-shadow: 0 0 10px var(--neon-color);
+}
+
+.skill.animated .skill-progress-fill {
+    width: var(--progress, 100%);
 }

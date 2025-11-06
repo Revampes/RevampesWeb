@@ -30,6 +30,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     let currentParticleCount = getResponsiveParticleCount();
 
+    // Mouse tracking
+    const mouse = {
+        x: null,
+        y: null,
+        radius: 120
+    };
+
+    // Add mouse event listeners to canvas
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
+
     // Debug: Log initialization and canvas/parent size
     console.log('Initializing particles for', canvas.id);
     console.log('Parent size before resize:', hero.offsetWidth, hero.offsetHeight);
@@ -87,6 +106,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         update() {
+            // Mouse interaction - repel particles from mouse
+            if (mouse.x !== null && mouse.y !== null) {
+                const dx = this.x - mouse.x;
+                const dy = this.y - mouse.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < mouse.radius) {
+                    const force = (mouse.radius - distance) / mouse.radius;
+                    const angle = Math.atan2(dy, dx);
+                    const moveX = Math.cos(angle) * force * 3;
+                    const moveY = Math.sin(angle) * force * 3;
+                    
+                    this.x += moveX;
+                    this.y += moveY;
+                }
+            }
+
             this.x += this.vx;
             this.y += this.vy;
 
@@ -96,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 确保粒子在画布内
             this.x = Math.max(0, Math.min(this.x, canvas.width));
-            this.y = Math.max(0, Math.min(this.y, canvas.height));
+            this.y = Math.max(0, Math.min(this.y, canvas.height));  
         }
 
         draw() {
@@ -162,3 +198,4 @@ document.addEventListener('DOMContentLoaded', () => {
     animate();
     console.log('Animation loop started');
 });
+

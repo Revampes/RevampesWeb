@@ -307,3 +307,56 @@
     background-size: 200% 200%;
     animation: gradientShift 3s ease infinite;
 }
+
+/* Add to your animations.css */
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+    50% { transform: translateY(-5px) rotateX(2deg) rotateY(2deg); }
+}
+
+.hover-float {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-style: preserve-3d;
+}
+
+.hover-float:hover {
+    animation: float 3s ease-in-out infinite;
+    box-shadow: 0 15px 30px var(--neon-color);
+}
+
+/* Add to your animations.css */
+@keyframes textReveal {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+        letter-spacing: -0.5em;
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: normal;
+    }
+}
+
+.text-reveal {
+    opacity: 0;
+    animation: textReveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Add to your animations.css */
+@keyframes neonBorderPulse {
+    0%, 100% { 
+        box-shadow: 0 0 5px var(--neon-color),
+                   inset 0 0 5px var(--neon-color);
+    }
+    50% { 
+        box-shadow: 0 0 20px var(--neon-color),
+                   inset 0 0 10px var(--neon-color);
+    }
+}
+
+.neon-border {
+    position: relative;
+    border: 2px solid var(--neon-color);
+    animation: neonBorderPulse 2s infinite;
+}

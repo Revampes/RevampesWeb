@@ -127,6 +127,11 @@ html, body {
     gap: 4rem;
     position: relative;
     z-index: 1;
+    pointer-events: none;
+}
+
+.hero-content-wrapper > * {
+    pointer-events: auto;
 }
 
 .neon-effect {
