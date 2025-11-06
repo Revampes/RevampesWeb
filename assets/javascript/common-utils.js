@@ -107,7 +107,7 @@ function initSidebar() {
 // Page Loader Functionality
 // ========================================
 function initPageLoader(minTime = 1000) {
-    const loader = document.getElementById('page-loader');
+    const loader = document.querySelector('.wheel-and-hamster');
     if (!loader) return;
 
     const loaderStart = Date.now();
@@ -117,6 +117,10 @@ function initPageLoader(minTime = 1000) {
         const delay = Math.max(0, minTime - elapsed);
         setTimeout(() => {
             loader.classList.add('hidden');
+            // Set display none after animation
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500); // Wait for fade out animation
         }, delay);
     }
 
@@ -131,7 +135,7 @@ function initPageLoader(minTime = 1000) {
 // Navigation with Loader
 // ========================================
 function initNavigationWithLoader() {
-    const loader = document.getElementById('page-loader');
+    const loader = document.querySelector('.wheel-and-hamster');
     if (!loader) return;
 
     function getSafeHref(href) {
@@ -144,6 +148,7 @@ function initNavigationWithLoader() {
 
     function showLoaderAndNavigate(href) {
         loader.classList.remove('hidden');
+        loader.style.display = 'flex';
         setTimeout(() => {
             window.location.href = getSafeHref(href);
         }, 300);
