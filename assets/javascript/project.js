@@ -55,6 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    function normalizeWebsiteUrl(url) {
+        if (!url) return null;
+        const trimmed = url.trim();
+        if (!trimmed) return null;
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        return `https://${trimmed}`;
+    }
+
+
     async function getRepoLanguages(repoName) {
         try {
             const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/languages`);
@@ -62,6 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return Object.keys(languages);
         } catch (error) {
             return [];
+        }
+    }
+
+    // Check if repo has GitHub Pages deployment
+    async function getRepoPagesUrl(repoName) {
+        try {
+            const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.html_url || null;
+        } catch (error) {
+            return null;
         }
     }
 
@@ -117,7 +138,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderProgrammingCard(project) {
         const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
-        
+        let deployBtn = '';
+        if (project.websiteUrl) {
+            deployBtn = `<a class="project-link" href="${project.websiteUrl}" target="_blank" rel="noopener" style="margin-bottom:8px;background:var(--neon-color,#ff6ec7);color:#fff;"><i class="fas fa-globe"></i> Visit Website</a>`;
+        }
         return `
             <div class="project-card-header">
                 <img class="project-image" src="${project.ogImage}" alt="${project.title} preview" onerror="this.onerror=null;this.src='${project.avatar}';">
@@ -130,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span><i class="fas fa-star"></i> ${project.stars} stars</span>
                     <span><i class="fas fa-code-branch"></i> ${project.forks} forks</span>
                 </div>
+                ${deployBtn}
                 <a class="project-link" href="${project.link}" target="_blank" rel="noopener">View Repository</a>
             </div>
         `;
@@ -269,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
     async function loadProjects() {
         try {
             console.log('Fetching GitHub repos...');
@@ -280,9 +306,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Array.isArray(repos)) {
                 const programmingProjects = await Promise.all(
                     repos.map(async (repo) => {
-                        const languages = await getRepoLanguages(repo.name);
+                        const [languages, pagesUrl] = await Promise.all([
+                            getRepoLanguages(repo.name),
+                            getRepoPagesUrl(repo.name)
+                        ]);
                         const tags = ['github', ...languages.map(l => l.toLowerCase())];
-                        
+                        const homepageUrl = normalizeWebsiteUrl(repo.homepage);
+                        const websiteUrl = pagesUrl || homepageUrl;
                         return {
                             title: repo.name,
                             description: repo.description || 'No description available.',
@@ -292,7 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             stars: repo.stargazers_count,
                             forks: repo.forks_count,
                             category: 'programming',
-                            tags: tags
+                            tags: tags,
+                            websiteUrl: websiteUrl
                         };
                     })
                 );
