@@ -28,6 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
             image: "../images/sketchingone.png",
             category: "art",
             tags: ["art", "sketch", "landscape"]
+        },
+        {   
+            title: "Doggie Pic 1",
+            description: "Not bad huh?",
+            image: "../images/DoggiePic.png",
+            category: "art",
+            tags: ["art", "character"]
+        },
+        {   
+            title: "Doggie Pic 2",
+            description: "Still not bad huh?",
+            image: "../images/DoggiePic2.png",
+            category: "art",
+            tags: ["art", "character"]
         }
     ];
 
