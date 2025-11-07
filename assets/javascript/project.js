@@ -42,6 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
             image: "../images/DoggiePic2.png",
             category: "art",
             tags: ["art", "character"]
+        },
+        {
+            title: "Autumn Leaves",
+            description: "A sketching of autumn leaves.",
+            image: "../images/autumn_leaves.png",
+            category: "art",
+            tags: ["art", "nature", "autumn"]
         }
     ];
 
