@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
         let deployBtn = '';
         if (project.websiteUrl) {
-            deployBtn = `<a class="project-link" href="${project.websiteUrl}" target="_blank" rel="noopener" style="margin-bottom:8px;background:var(--neon-color,#ff6ec7);color:#fff;"><i class="fas fa-globe"></i> Visit Website</a>`;
+            deployBtn = `<a class="project-web-link" href="${project.websiteUrl}" target="_blank" rel="noopener" style="margin-bottom:8px;background:var(--neon-color,#ff6ec7);color:#fff;"><i class="fas fa-globe"></i> Visit Website</a>`;
         }
         return `
             <div class="project-card-header">

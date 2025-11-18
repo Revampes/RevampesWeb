@@ -281,7 +281,7 @@
     color: var(--neon-color, #ff6ec7);
 }
 
-.project-link {
+.project-web-link {
     margin-top: auto;
     display: inline-block;
     background: var(--neon-color, #ff6ec7);
@@ -300,7 +300,7 @@
     z-index: 10;
 }
 
-.project-link:hover {
+.project-web-link:hover {
     background: #fff;
     color: var(--neon-color, #ff6ec7);
 }
