@@ -88,29 +88,52 @@
             </div>
         </div>
         
-        <!-- Category Filter -->
-        <div class="category-filter">
-            <button class="category-btn active" data-category="all">All</button>
-            <button class="category-btn" data-category="programming">Programming</button>
-            <button class="category-btn" data-category="art">Arts</button>
-            <button class="category-btn" data-category="documentation">Documentation</button>
-        </div>
-
         <!-- Search Bar -->
         <div class="project-search">
             <div class="search-bar">
-                <input type="text" placeholder="Search by title, description, or tags..." id="repo-search">
-                <button class="search-btn"><i class="fas fa-search"></i></button>
+                <input type="text" placeholder="Search by title, description, or tags..." id="repo-search" aria-label="Search projects">
+                <button class="search-btn" aria-label="Search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Active Tags Display -->
-        <div class="active-tags" id="active-tags"></div>
+        <div class="project-sections">
+            <section class="project-section" aria-labelledby="programming-title">
+                <div class="section-header">
+                    <div>
+                        <h2 id="programming-title">Programming</h2>
+                        <p class="section-subtitle">Latest GitHub repositories, experiments, and playground builds.</p>
+                    </div>
+                    <span class="section-label">Code</span>
+                </div>
+                <div class="section-message" id="programming-message" role="status"></div>
+                <div class="project-list" id="programming-list" role="list"></div>
+            </section>
 
-        <div class="projects-grid-section">
-            <div class="projects-grid" id="projects-grid">
-                <!-- Projects will be inserted here by JavaScript -->
-            </div>
+            <section class="project-section" aria-labelledby="art-title">
+                <div class="section-header">
+                    <div>
+                        <h2 id="art-title">Arts</h2>
+                        <p class="section-subtitle">Sketches and illustrations that inspire the digital builds.</p>
+                    </div>
+                    <span class="section-label">Creative</span>
+                </div>
+                <div class="section-message" id="art-message" role="status"></div>
+                <div class="project-list" id="art-list" role="list"></div>
+            </section>
+
+            <section class="project-section" aria-labelledby="documentation-title">
+                <div class="section-header">
+                    <div>
+                        <h2 id="documentation-title">Documentation</h2>
+                        <p class="section-subtitle">Study materials, research notes, and knowledge drops.</p>
+                    </div>
+                    <span class="section-label">Docs</span>
+                </div>
+                <div class="section-message" id="documentation-message" role="status"></div>
+                <div class="project-list" id="documentation-list" role="list"></div>
+            </section>
         </div>
     </div>
 

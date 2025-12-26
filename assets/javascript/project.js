@@ -1,66 +1,107 @@
 // Common utilities (theme, loader) are handled by common-utils.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    const username = "Revampes";
-    const grid = document.getElementById('projects-grid');
+    const username = 'Revampes';
     const searchInput = document.getElementById('repo-search');
-    const categoryBtns = document.querySelectorAll('.category-btn');
-    const activeTagsContainer = document.getElementById('active-tags');
+    const sectionRefs = {
+        programming: {
+            list: document.getElementById('programming-list'),
+            message: document.getElementById('programming-message')
+        },
+        art: {
+            list: document.getElementById('art-list'),
+            message: document.getElementById('art-message')
+        },
+        documentation: {
+            list: document.getElementById('documentation-list'),
+            message: document.getElementById('documentation-message')
+        }
+    };
     const imageModal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const modalClose = document.getElementById('modal-close');
-    
-    let allProjects = [];
-    let currentCategory = 'all';
-    let activeTags = new Set();
+
+    const emptyStateCopy = {
+        programming: 'Repositories will pop up here soon.',
+        art: 'More creative drops are coming soon.',
+        documentation: 'Documentation updates will appear here.'
+    };
+
+    let programmingProjects = [];
+    let searchQuery = '';
 
     const artProjects = [
         {
-            title: "魔丸靈珠 中秋version",
-            description: "For fun, and happy mid-autumn festival!",
-            image: "../images/drawingone.png",
-            category: "art",
-            tags: ["art", "paint", "character"]
-        },
-        {   
-            title: "Bamboo Forest sketch",
-            description: "A normal piece of sketching",
-            image: "../images/sketchingone.png",
-            category: "art",
-            tags: ["art", "sketch", "landscape"]
-        },
-        {   
-            title: "Doggie Pic 1",
-            description: "Not bad huh?",
-            image: "../images/DoggiePic.png",
-            category: "art",
-            tags: ["art", "character"]
-        },
-        {   
-            title: "Doggie Pic 2",
-            description: "Still not bad huh?",
-            image: "../images/DoggiePic2.png",
-            category: "art",
-            tags: ["art", "character"]
+            title: '魔丸靈珠 中秋version',
+            description: 'For fun, and happy mid-autumn festival!',
+            category: 'art',
+            stack: ['Digital Illustration', 'Clip Studio Paint'],
+            tags: ['art', 'paint', 'character'],
+            links: [
+                { label: 'View Artwork', type: 'modal-image', url: '../images/drawingone.png' }
+            ]
         },
         {
-            title: "Autumn Leaves",
-            description: "A sketching of autumn leaves.",
-            image: "../images/autumn_leaves.png",
-            category: "art",
-            tags: ["art", "nature", "autumn"]
+            title: 'Bamboo Forest sketch',
+            description: 'A normal piece of sketching.',
+            category: 'art',
+            stack: ['Sketchbook', 'Graphite'],
+            tags: ['art', 'sketch', 'landscape'],
+            links: [
+                { label: 'View Artwork', type: 'modal-image', url: '../images/sketchingone.png' }
+            ]
+        },
+        {
+            title: 'Doggie Pic 1',
+            description: 'Not bad huh?',
+            category: 'art',
+            stack: ['Digital Illustration'],
+            tags: ['art', 'character'],
+            links: [
+                { label: 'View Artwork', type: 'modal-image', url: '../images/DoggiePic.png' }
+            ]
+        },
+        {
+            title: 'Doggie Pic 2',
+            description: 'Still not bad huh?',
+            category: 'art',
+            stack: ['Digital Illustration'],
+            tags: ['art', 'character'],
+            links: [
+                { label: 'View Artwork', type: 'modal-image', url: '../images/DoggiePic2.png' }
+            ]
+        },
+        {
+            title: 'Autumn Leaves',
+            description: 'A sketching of autumn leaves.',
+            category: 'art',
+            stack: ['Sketchbook', 'Colored Pencils'],
+            tags: ['art', 'nature', 'autumn'],
+            links: [
+                { label: 'View Artwork', type: 'modal-image', url: '../images/autumn_leaves.png' }
+            ]
         }
     ];
 
     const docProjects = [
         {
-            title: "Chemistry DSE Notes",
-            description: "DSE chemistry notes and by topic question from 2012-2024",
-            link: "https://docs.google.com/document/d/14bsq4VLEhD0N4QkLUcIZzEeraZJJ90QBhYkeh5jMXjc/edit?usp=sharing",
-            category: "documentation",
-            tags: ["doc", "chemistry", "education"]
+            title: 'Chemistry DSE Notes',
+            description: 'DSE chemistry notes and by-topic questions from 2012-2024.',
+            category: 'documentation',
+            stack: ['Google Docs', 'Education'],
+            tags: ['doc', 'chemistry', 'education'],
+            links: [
+                { label: 'Open Document', url: 'https://docs.google.com/document/d/14bsq4VLEhD0N4QkLUcIZzEeraZJJ90QBhYkeh5jMXjc/edit?usp=sharing' }
+            ]
         }
     ];
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value.trim().toLowerCase();
+            renderAllSections();
+        });
+    }
 
     function normalizeWebsiteUrl(url) {
         if (!url) return null;
@@ -69,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (/^https?:\/\//i.test(trimmed)) return trimmed;
         return `https://${trimmed}`;
     }
-
 
     async function getRepoLanguages(repoName) {
         try {
@@ -81,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Check if repo has GitHub Pages deployment
     async function getRepoPagesUrl(repoName) {
         try {
             const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
@@ -93,279 +132,274 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderProjects(projects) {
-        grid.innerHTML = '';
-        if (projects.length === 0) {
-            grid.innerHTML = '<p style="color:var(--text-color,#fff);text-align:center;width:100%;grid-column: 1/-1;">No projects found.</p>';
+    function formatUpdatedDate(value) {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        return `Updated ${date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}`;
+    }
+
+    function setSectionMessage(category, message) {
+        const ref = sectionRefs[category];
+        if (!ref || !ref.message) return;
+        if (message) {
+            ref.message.innerHTML = message;
+            ref.message.classList.add('active');
+        } else {
+            ref.message.innerHTML = '';
+            ref.message.classList.remove('active');
+        }
+    }
+
+    function matchesSearch(project) {
+        if (!searchQuery) return true;
+        const haystack = [
+            project.title,
+            project.description,
+            project.meta,
+            ...(project.stack || []),
+            ...(project.tags || [])
+        ]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+        return haystack.includes(searchQuery);
+    }
+
+    function filterProjects(projects) {
+        return projects.filter(matchesSearch);
+    }
+
+    function buildProjectRow(project) {
+        const row = document.createElement('div');
+        row.className = 'project-row';
+        row.setAttribute('role', 'listitem');
+
+        const main = document.createElement('div');
+        main.className = 'project-main';
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = project.title;
+        main.appendChild(titleEl);
+
+        if (project.description) {
+            const descEl = document.createElement('p');
+            descEl.className = 'project-description';
+            descEl.textContent = project.description;
+            main.appendChild(descEl);
+        }
+
+        if (project.meta) {
+            const metaEl = document.createElement('p');
+            metaEl.className = 'project-meta-line';
+            metaEl.textContent = project.meta;
+            main.appendChild(metaEl);
+        }
+
+        if (project.metrics && project.metrics.length) {
+            const metricsWrap = document.createElement('div');
+            metricsWrap.className = 'project-metrics';
+            project.metrics.forEach(metric => {
+                const badge = document.createElement('span');
+                badge.className = 'metric-badge';
+                if (metric.icon) {
+                    const icon = document.createElement('i');
+                    icon.className = metric.icon;
+                    icon.setAttribute('aria-hidden', 'true');
+                    badge.appendChild(icon);
+                }
+                const value = document.createElement('span');
+                value.textContent = `${metric.value} ${metric.label || ''}`.trim();
+                badge.appendChild(value);
+                metricsWrap.appendChild(badge);
+            });
+            main.appendChild(metricsWrap);
+        }
+
+        row.appendChild(main);
+        row.appendChild(buildStackColumn(project));
+        row.appendChild(buildLinksColumn(project));
+
+        return row;
+    }
+
+    function buildStackColumn(project) {
+        const stackWrapper = document.createElement('div');
+        stackWrapper.className = 'project-built-with';
+        const stackItems = (project.stack && project.stack.length ? project.stack : project.tags || []).slice(0, 8);
+
+        if (!stackItems.length) {
+            const pill = document.createElement('span');
+            pill.className = 'stack-pill muted';
+            pill.textContent = 'Coming soon';
+            stackWrapper.appendChild(pill);
+            return stackWrapper;
+        }
+
+        stackItems.forEach(item => {
+            const pill = document.createElement('span');
+            pill.className = 'stack-pill';
+            pill.textContent = item;
+            stackWrapper.appendChild(pill);
+        });
+
+        return stackWrapper;
+    }
+
+    function buildLinksColumn(project) {
+        const linksWrapper = document.createElement('div');
+        linksWrapper.className = 'project-links';
+        const links = project.links || [];
+
+        if (!links.length) {
+            const placeholder = document.createElement('span');
+            placeholder.className = 'project-links-empty';
+            placeholder.textContent = 'Links coming soon';
+            linksWrapper.appendChild(placeholder);
+            return linksWrapper;
+        }
+
+        links.forEach(link => {
+            if (link.type === 'modal-image') {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'project-link-btn';
+                button.textContent = link.label;
+                button.addEventListener('click', () => openModal(link.url, project.title));
+                linksWrapper.appendChild(button);
+            } else if (link.url) {
+                const anchor = document.createElement('a');
+                anchor.className = 'project-link-btn';
+                anchor.href = link.url;
+                anchor.target = '_blank';
+                anchor.rel = 'noopener';
+                anchor.textContent = link.label;
+                linksWrapper.appendChild(anchor);
+            }
+        });
+
+        return linksWrapper;
+    }
+
+    function renderRows(category, projects) {
+        const ref = sectionRefs[category];
+        if (!ref || !ref.list) return;
+        const filtered = filterProjects(projects);
+        ref.list.innerHTML = '';
+
+        if (!filtered.length) {
+            const emptyEl = document.createElement('p');
+            emptyEl.className = 'section-empty';
+            emptyEl.textContent = searchQuery
+                ? 'No projects match your search.'
+                : (emptyStateCopy[category] || 'Projects will be added soon.');
+            ref.list.appendChild(emptyEl);
             return;
         }
-        projects.forEach(project => {
-            const card = document.createElement('div');
-            card.className = 'project-card';
-            
-            if (project.category === 'programming') {
-                card.innerHTML = renderProgrammingCard(project);
-            } else if (project.category === 'art') {
-                card.classList.add('art-card');
-                card.innerHTML = renderArtCard(project);
-            } else if (project.category === 'documentation') {
-                card.innerHTML = renderDocCard(project);
-            }
-            
-            grid.appendChild(card);
-        });
 
-        document.querySelectorAll('.project-tag').forEach(tag => {
-            tag.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleTag(tag.textContent);
-            });
-        });
-
-        document.querySelectorAll('.art-card .project-card-header').forEach(header => {
-            header.addEventListener('click', function() {
-                const img = this.querySelector('.project-image');
-                openModal(img.src, img.alt);
-            });
-        });
-
-        // Add click handler for "View Full Image" buttons in art cards
-        document.querySelectorAll('.view-full-image-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const imageSrc = this.getAttribute('data-image');
-                const imageAlt = this.getAttribute('data-alt');
-                openModal(imageSrc, imageAlt);
-            });
-        });
-
-        // Initialize scroll animation for project cards
-        initScrollAnimation();
-    }
-
-    function renderProgrammingCard(project) {
-        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
-        let deployBtn = '';
-        if (project.websiteUrl) {
-            deployBtn = `<a class="project-web-link" href="${project.websiteUrl}" target="_blank" rel="noopener" style="margin-bottom:8px;background:var(--neon-color,#ff6ec7);color:#fff;"><i class="fas fa-globe"></i> Visit Website</a>`;
-        }
-        return `
-            <div class="project-card-header">
-                <img class="project-image" src="${project.ogImage}" alt="${project.title} preview" onerror="this.onerror=null;this.src='${project.avatar}';">
-            </div>
-            <div class="project-card-body">
-                <div class="project-title">${project.title}</div>
-                <div class="project-desc">${project.description}</div>
-                <div class="project-tags">${tagsHTML}</div>
-                <div class="project-meta">
-                    <span><i class="fas fa-star"></i> ${project.stars} stars</span>
-                    <span><i class="fas fa-code-branch"></i> ${project.forks} forks</span>
-                </div>
-                ${deployBtn}
-                <a class="project-link" href="${project.link}" target="_blank" rel="noopener">View Repository</a>
-            </div>
-        `;
-    }
-
-    function renderArtCard(project) {
-        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
-        
-        return `
-            <div class="project-card-header">
-                <img class="project-image" src="${project.image}" alt="${project.title}">
-            </div>
-            <div class="project-card-body">
-                <div class="project-title">${project.title}</div>
-                <div class="project-desc">${project.description}</div>
-                <div class="project-tags">${tagsHTML}</div>
-                <button class="project-link view-full-image-btn" data-image="${project.image}" data-alt="${project.title}" style="border: none; width: 100%; text-align: center; cursor: pointer;">View Full Image</button>
-            </div>
-        `;
-    }
-
-    function renderDocCard(project) {
-        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
-        
-        return `
-            <div class="project-card-body" style="padding: 24px 20px;">
-                <div class="project-title">${project.title}</div>
-                <div class="project-desc">${project.description}</div>
-                <div class="project-tags">${tagsHTML}</div>
-                <a class="project-link" href="${project.link}" target="_blank" rel="noopener">Open Document</a>
-            </div>
-        `;
-    }
-
-    function filterProjects() {
-        const query = searchInput.value.trim().toLowerCase();
-        
-        let filtered = allProjects;
-
-        if (currentCategory !== 'all') {
-            filtered = filtered.filter(p => p.category === currentCategory);
-        }
-
-        if (activeTags.size > 0) {
-            filtered = filtered.filter(p => 
-                Array.from(activeTags).every(tag => p.tags.includes(tag))
-            );
-        }
-
-        if (query) {
-            filtered = filtered.filter(p =>
-                p.title.toLowerCase().includes(query) ||
-                p.description.toLowerCase().includes(query) ||
-                p.tags.some(tag => tag.toLowerCase().includes(query))
-            );
-        }
-
-        renderProjects(filtered);
-    }
-
-    function toggleTag(tag) {
-        if (activeTags.has(tag)) {
-            activeTags.delete(tag);
-        } else {
-            activeTags.add(tag);
-        }
-        updateActiveTagsDisplay();
-        filterProjects();
-    }
-
-    function updateActiveTagsDisplay() {
-        activeTagsContainer.innerHTML = '';
-        activeTags.forEach(tag => {
-            const badge = document.createElement('span');
-            badge.className = 'tag-badge';
-            badge.innerHTML = `${tag} <i class="fas fa-times"></i>`;
-            badge.addEventListener('click', () => toggleTag(tag));
-            activeTagsContainer.appendChild(badge);
+        filtered.forEach(project => {
+            ref.list.appendChild(buildProjectRow(project));
         });
     }
 
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            categoryBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentCategory = btn.dataset.category;
-            filterProjects();
-        });
-    });
+    function renderAllSections() {
+        renderRows('programming', programmingProjects);
+        renderRows('art', artProjects);
+        renderRows('documentation', docProjects);
+    }
 
-    searchInput.addEventListener('input', filterProjects);
-
-    function openModal(src, alt) {
+    function openModal(src, altText) {
+        if (!imageModal || !modalImage || !src) return;
         modalImage.src = src;
-        modalImage.alt = alt;
+        modalImage.alt = altText || 'Artwork preview';
         imageModal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
+        if (!imageModal) return;
         imageModal.classList.remove('active');
         document.body.style.overflow = '';
     }
 
-    modalClose.addEventListener('click', closeModal);
-    imageModal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+
+    const modalOverlay = imageModal ? imageModal.querySelector('.modal-overlay') : null;
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeModal);
+    }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+        if (e.key === 'Escape' && imageModal?.classList.contains('active')) {
             closeModal();
         }
     });
 
-    // Initialize scroll-triggered animation for project cards
-    function initScrollAnimation() {
-        const cards = document.querySelectorAll('.project-card');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting && !entry.target.classList.contains('animate-visible')) {
-                    // Calculate delay based on card position in grid
-                    const cardIndex = Array.from(cards).indexOf(entry.target);
-                    const delay = cardIndex * 100; // 100ms delay between each card
-                    
-                    setTimeout(() => {
-                        entry.target.classList.add('animate-visible');
-                    }, delay);
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        cards.forEach(card => {
-            observer.observe(card);
-        });
-    }
-
-
     async function loadProjects() {
         try {
-            console.log('Fetching GitHub repos...');
             const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
-            console.log('Response status:', response.status);
-            const repos = await response.json();
-            console.log('Repos received:', repos.length);
-            
-            if (Array.isArray(repos)) {
-                const programmingProjects = await Promise.all(
-                    repos.map(async (repo) => {
-                        const [languages, pagesUrl] = await Promise.all([
-                            getRepoLanguages(repo.name),
-                            getRepoPagesUrl(repo.name)
-                        ]);
-                        const tags = ['github', ...languages.map(l => l.toLowerCase())];
-                        const homepageUrl = normalizeWebsiteUrl(repo.homepage);
-                        const websiteUrl = pagesUrl || homepageUrl;
-                        return {
-                            title: repo.name,
-                            description: repo.description || 'No description available.',
-                            link: repo.html_url,
-                            ogImage: `https://opengraph.githubassets.com/1/${username}/${repo.name}`,
-                            avatar: repo.owner?.avatar_url || '',
-                            stars: repo.stargazers_count,
-                            forks: repo.forks_count,
-                            category: 'programming',
-                            tags: tags,
-                            websiteUrl: websiteUrl
-                        };
-                    })
-                );
-
-                programmingProjects.sort((a, b) => b.stars - a.stars);
-
-                allProjects = [...programmingProjects, ...artProjects, ...docProjects];
-                console.log('Total projects:', allProjects.length);
-                renderProjects(allProjects);
-            } else {
-                // Handle API errors (rate limit, etc.)
-                console.error('GitHub API Error:', repos);
-                allProjects = [...artProjects, ...docProjects];
-                renderProjects(allProjects);
-                
-                // Show a friendly warning message
-                const warningMsg = document.createElement('p');
-                warningMsg.style.cssText = 'color:var(--neon-color,#ff6ec7);text-align:center;width:100%;grid-column:1/-1;padding:20px;background:rgba(255,110,199,0.1);border-radius:8px;margin-bottom:20px;';
-                const errorMessage = repos.message || 'Unable to load GitHub repositories';
-                warningMsg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${errorMessage}. Showing other projects only.`;
-                grid.insertBefore(warningMsg, grid.firstChild);
+            if (!response.ok) {
+                throw new Error('Unable to load GitHub repositories.');
             }
+
+            const repos = await response.json();
+            if (!Array.isArray(repos)) {
+                throw new Error(repos?.message || 'Unexpected GitHub API response.');
+            }
+            const programmingData = await Promise.all(
+                repos.map(async (repo) => {
+                    const [languages, pagesUrl] = await Promise.all([
+                        getRepoLanguages(repo.name),
+                        getRepoPagesUrl(repo.name)
+                    ]);
+
+                    const stack = languages.length ? languages.slice(0, 6) : (repo.language ? [repo.language] : []);
+                    const tags = ['github', ...languages.map(l => l.toLowerCase())];
+                    const homepageUrl = normalizeWebsiteUrl(repo.homepage);
+                    const websiteUrl = pagesUrl || homepageUrl;
+
+                    const links = [];
+                    if (websiteUrl) {
+                        links.push({ label: 'Visit Website', url: websiteUrl });
+                    }
+                    links.push({ label: 'View Source', url: repo.html_url });
+
+                    return {
+                        title: repo.name,
+                        description: repo.description || 'No description available yet.',
+                        category: 'programming',
+                        stack,
+                        tags,
+                        links,
+                        metrics: [
+                            { icon: 'fas fa-star', value: repo.stargazers_count, label: 'stars' },
+                            { icon: 'fas fa-code-branch', value: repo.forks_count, label: 'forks' }
+                        ],
+                        meta: formatUpdatedDate(repo.updated_at)
+                    };
+                })
+            );
+
+            programmingProjects = programmingData.sort((a, b) => {
+                const starsA = a.metrics?.[0]?.value || 0;
+                const starsB = b.metrics?.[0]?.value || 0;
+                return starsB - starsA;
+            });
+            setSectionMessage('programming', '');
+            renderRows('programming', programmingProjects);
         } catch (error) {
             console.error('Error loading projects:', error);
-            // Still show art and documentation projects even if GitHub API fails
-            allProjects = [...artProjects, ...docProjects];
-            renderProjects(allProjects);
-            
-            // Show a warning message
-            const warningMsg = document.createElement('p');
-            warningMsg.style.cssText = 'color:var(--neon-color,#ff6ec7);text-align:center;width:100%;grid-column:1/-1;padding:20px;background:rgba(255,110,199,0.1);border-radius:8px;margin-bottom:20px;';
-            warningMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories. Showing other projects only.';
-            grid.insertBefore(warningMsg, grid.firstChild);
+            setSectionMessage(
+                'programming',
+                '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Unable to load GitHub repositories right now. Showing curated projects only.'
+            );
+            programmingProjects = [];
+            renderRows('programming', programmingProjects);
         }
     }
 
+    renderAllSections();
     loadProjects();
 });
