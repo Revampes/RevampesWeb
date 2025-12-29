@@ -293,6 +293,7 @@ html, body {
     transform: translateY(0);
 }
 
+
 .contributions-header {
     display: flex;
     justify-content: space-between;
@@ -815,6 +816,10 @@ html, body {
     box-shadow: 0 10px 30px rgba(255, 110, 199, 0.2);
     text-align: center;
     transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .contact-item:hover {
@@ -824,12 +829,14 @@ html, body {
 .contact-item i {
     font-size: 2rem;
     color: var(--neon-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
+    display: block;
 }
 
 .contact-item a {
     color: var(--text-color);
     text-decoration: none;
+    display: block;
 }
 
 .contact-item a:hover {
@@ -1099,6 +1106,14 @@ html, body {
 
     .project-card:first-child {
         grid-row: span 1;
+    }
+
+    .index-projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .index-project-card:first-child {
+        grid-row: auto;
     }
 
     .project-card h3 {

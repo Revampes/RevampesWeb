@@ -268,4 +268,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.animate-in').forEach(element => {
         observer.observe(element);
     });
+
 });
