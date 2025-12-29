@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const username = 'Revampes';
+    const MAX_PROGRAMMING_REPOS = 30;
+    const MAX_DETAILED_REQUESTS = 12;
     const searchInput = document.getElementById('repo-search');
     const sectionRefs = {
         programming: {
@@ -339,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadProjects() {
         try {
-            const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
+            const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=${MAX_PROGRAMMING_REPOS}&sort=updated`);
             if (!response.ok) {
                 throw new Error('Unable to load GitHub repositories.');
             }
@@ -348,14 +350,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!Array.isArray(repos)) {
                 throw new Error(repos?.message || 'Unexpected GitHub API response.');
             }
+            const limitedRepos = repos.slice(0, MAX_PROGRAMMING_REPOS);
             const programmingData = await Promise.all(
-                repos.map(async (repo) => {
-                    const [languages, pagesUrl] = await Promise.all([
-                        getRepoLanguages(repo.name),
-                        getRepoPagesUrl(repo.name)
-                    ]);
+                limitedRepos.map(async (repo, index) => {
+                    let languages = [];
+                    let pagesUrl = null;
+                    const needsDetailedInfo = index < MAX_DETAILED_REQUESTS;
 
-                    const stack = languages.length ? languages.slice(0, 6) : (repo.language ? [repo.language] : []);
+                    if (needsDetailedInfo) {
+                        [languages, pagesUrl] = await Promise.all([
+                            getRepoLanguages(repo.name),
+                            getRepoPagesUrl(repo.name)
+                        ]);
+                    } else {
+                        if (repo.language) {
+                            languages = [repo.language];
+                        }
+                        if (repo.has_pages) {
+                            pagesUrl = `https://${username}.github.io/${repo.name}/`;
+                        }
+                    }
+
+                    if (!languages.length && repo.language) {
+                        languages = [repo.language];
+                    }
+
+                    const stack = languages.slice(0, 6);
                     const tags = ['github', ...languages.map(l => l.toLowerCase())];
                     const homepageUrl = normalizeWebsiteUrl(repo.homepage);
                     const websiteUrl = pagesUrl || homepageUrl;
