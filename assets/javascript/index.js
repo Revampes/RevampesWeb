@@ -10,18 +10,31 @@ document.addEventListener('DOMContentLoaded', () => {
         { element: document.querySelector('#typing-intro p:nth-child(2)'), text: 'Yes front-end, No back-end, No code, Yes sports, Yes game, Yes draw, Yes chess!' },
     ].filter(item => item.element);
 
-    const typingSpeed = 35;
+    const typingBaseSpeed = 35;
+    const typingSpeedVariance = 45; // ±variance range for realistic feel
     const delayBetweenElements = 500;
+
+    function randomTypingDelay() {
+        return typingBaseSpeed + Math.floor(Math.random() * typingSpeedVariance * 2) - typingSpeedVariance;
+    }
 
     function typeWriter(element, text, index, callback) {
         if (!element) return; // safety
         if (index < text.length) {
             element.classList.remove('typing-cursor');
             element.textContent += text.charAt(index);
+
+            // Extra pause on punctuation for natural rhythm
+            const char = text.charAt(index);
+            let extraPause = 0;
+            if (char === '.' || char === '!' || char === '?') extraPause = 200;
+            else if (char === ',' || char === ';') extraPause = 100;
+            else if (char === ' ') extraPause = 20;
+
             element.classList.add('typing-cursor');
             setTimeout(() => {
                 typeWriter(element, text, index + 1, callback);
-            }, typingSpeed);
+            }, randomTypingDelay() + extraPause);
         } else if (callback) {
             element.classList.remove('typing-cursor');
             setTimeout(callback, delayBetweenElements);

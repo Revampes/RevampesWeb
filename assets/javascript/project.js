@@ -2,8 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const username = 'Revampes';
-    const MAX_PROGRAMMING_REPOS = 30;
-    const MAX_DETAILED_REQUESTS = 12;
+    const MAX_PROGRAMMING_REPOS = 21;
     const searchInput = document.getElementById('repo-search');
     const sectionRefs = {
         programming: {
@@ -19,9 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
             message: document.getElementById('documentation-message')
         }
     };
+
+    // Image modal
     const imageModal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const modalClose = document.getElementById('modal-close');
+
+    // Explore modal
+    const exploreModal = document.getElementById('explore-modal');
+    const exploreTitle = document.getElementById('explore-title');
+    const exploreBody = document.getElementById('explore-body');
+    const exploreFooter = document.getElementById('explore-footer');
+    const exploreClose = document.getElementById('explore-close');
+    const exploreOverlay = document.getElementById('explore-overlay');
 
     const emptyStateCopy = {
         programming: 'Repositories will pop up here soon.',
@@ -39,9 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'art',
             stack: ['Digital Illustration', 'Clip Studio Paint'],
             tags: ['art', 'paint', 'character'],
-            links: [
-                { label: 'View Artwork', type: 'modal-image', url: '../images/drawingone.png' }
-            ]
+            previewUrl: '../images/drawingone.png'
         },
         {
             title: 'Bamboo Forest sketch',
@@ -49,9 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'art',
             stack: ['Sketchbook', 'Graphite'],
             tags: ['art', 'sketch', 'landscape'],
-            links: [
-                { label: 'View Artwork', type: 'modal-image', url: '../images/sketchingone.png' }
-            ]
+            previewUrl: '../images/sketchingone.png'
         },
         {
             title: 'Doggie Pic 1',
@@ -59,9 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'art',
             stack: ['Digital Illustration'],
             tags: ['art', 'character'],
-            links: [
-                { label: 'View Artwork', type: 'modal-image', url: '../images/DoggiePic.png' }
-            ]
+            previewUrl: '../images/DoggiePic.png'
         },
         {
             title: 'Doggie Pic 2',
@@ -69,9 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'art',
             stack: ['Digital Illustration'],
             tags: ['art', 'character'],
-            links: [
-                { label: 'View Artwork', type: 'modal-image', url: '../images/DoggiePic2.png' }
-            ]
+            previewUrl: '../images/DoggiePic2.png'
         },
         {
             title: 'Autumn Leaves',
@@ -79,9 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'art',
             stack: ['Sketchbook', 'Colored Pencils'],
             tags: ['art', 'nature', 'autumn'],
-            links: [
-                { label: 'View Artwork', type: 'modal-image', url: '../images/autumn_leaves.png' }
-            ]
+            previewUrl: '../images/autumn_leaves.png'
         }
     ];
 
@@ -98,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    // ========== Search ==========
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             searchQuery = searchInput.value.trim().toLowerCase();
@@ -105,40 +105,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function normalizeWebsiteUrl(url) {
-        if (!url) return null;
-        const trimmed = url.trim();
-        if (!trimmed) return null;
-        if (/^https?:\/\//i.test(trimmed)) return trimmed;
-        return `https://${trimmed}`;
+    // ========== Helpers ==========
+    function formatDate(value) {
+        if (!value) return 'N/A';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'N/A';
+        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    async function getCommitCount(repoName) {
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/commits?per_page=1`);
+            const linkHeader = resp.headers.get('Link');
+            if (linkHeader) {
+                const match = linkHeader.match(/[&?]page=(\d+)>;\s*rel="last"/);
+                if (match) return parseInt(match[1], 10);
+            }
+            // Fallback: count from the array if Link header is absent (small repos)
+            const commits = await resp.json();
+            return Array.isArray(commits) ? commits.length : 0;
+        } catch {
+            return 0;
+        }
     }
 
     async function getRepoLanguages(repoName) {
         try {
-            const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/languages`);
-            const languages = await response.json();
+            const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/languages`);
+            const languages = await resp.json();
             return Object.keys(languages);
-        } catch (error) {
+        } catch {
             return [];
         }
     }
 
     async function getRepoPagesUrl(repoName) {
         try {
-            const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
-            if (!response.ok) return null;
-            const data = await response.json();
+            const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
+            if (!resp.ok) return null;
+            const data = await resp.json();
             return data.html_url || null;
-        } catch (error) {
+        } catch {
             return null;
         }
-    }
-
-    function formatUpdatedDate(value) {
-        if (!value) return '';
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return '';
-        return `Updated ${date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}`;
     }
 
     function setSectionMessage(category, message) {
@@ -158,135 +167,290 @@ document.addEventListener('DOMContentLoaded', () => {
         const haystack = [
             project.title,
             project.description,
-            project.meta,
             ...(project.stack || []),
             ...(project.tags || [])
-        ]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
+        ].filter(Boolean).join(' ').toLowerCase();
         return haystack.includes(searchQuery);
     }
 
-    function filterProjects(projects) {
-        return projects.filter(matchesSearch);
-    }
+    // ========== Build Cards ==========
+    function buildProgrammingCard(project, index) {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.setAttribute('role', 'listitem');
+        card.style.animationDelay = `${index * 0.06}s`;
 
-    function buildProjectRow(project) {
-        const row = document.createElement('div');
-        row.className = 'project-row';
-        row.setAttribute('role', 'listitem');
+        // Title
+        const title = document.createElement('h3');
+        title.className = 'card-title';
+        title.textContent = project.title;
+        card.appendChild(title);
 
-        const main = document.createElement('div');
-        main.className = 'project-main';
-
-        const titleEl = document.createElement('h3');
-        titleEl.textContent = project.title;
-        main.appendChild(titleEl);
-
+        // Description
         if (project.description) {
-            const descEl = document.createElement('p');
-            descEl.className = 'project-description';
-            descEl.textContent = project.description;
-            main.appendChild(descEl);
+            const desc = document.createElement('p');
+            desc.className = 'card-description';
+            desc.textContent = project.description;
+            card.appendChild(desc);
         }
 
-        if (project.meta) {
-            const metaEl = document.createElement('p');
-            metaEl.className = 'project-meta-line';
-            metaEl.textContent = project.meta;
-            main.appendChild(metaEl);
-        }
+        // Meta: commits, last commit, stars
+        const meta = document.createElement('div');
+        meta.className = 'card-meta';
 
-        if (project.metrics && project.metrics.length) {
-            const metricsWrap = document.createElement('div');
-            metricsWrap.className = 'project-metrics';
-            project.metrics.forEach(metric => {
-                const badge = document.createElement('span');
-                badge.className = 'metric-badge';
-                if (metric.icon) {
-                    const icon = document.createElement('i');
-                    icon.className = metric.icon;
-                    icon.setAttribute('aria-hidden', 'true');
-                    badge.appendChild(icon);
-                }
-                const value = document.createElement('span');
-                value.textContent = `${metric.value} ${metric.label || ''}`.trim();
-                badge.appendChild(value);
-                metricsWrap.appendChild(badge);
+        const commitsRow = document.createElement('div');
+        commitsRow.className = 'card-meta-row';
+        commitsRow.innerHTML = `<i class="fas fa-history"></i> <span>Total commits:</span> <span class="meta-value">${project.commitCount ?? '...'}</span>`;
+        meta.appendChild(commitsRow);
+
+        const lastCommitRow = document.createElement('div');
+        lastCommitRow.className = 'card-meta-row';
+        lastCommitRow.innerHTML = `<i class="fas fa-clock"></i> <span>Last commit:</span> <span class="meta-value">${project.lastCommitDate || 'N/A'}</span>`;
+        meta.appendChild(lastCommitRow);
+
+        const starsRow = document.createElement('div');
+        starsRow.className = 'card-meta-row';
+        starsRow.innerHTML = `<i class="fas fa-star"></i> <span>Stars:</span> <span class="meta-value">${project.stars ?? 0}</span>`;
+        meta.appendChild(starsRow);
+
+        card.appendChild(meta);
+
+        // Stack pills
+        const stackWrap = document.createElement('div');
+        stackWrap.className = 'card-stack';
+        const stackItems = (project.stack && project.stack.length ? project.stack : []).slice(0, 6);
+        if (stackItems.length) {
+            stackItems.forEach(item => {
+                const pill = document.createElement('span');
+                pill.className = 'stack-pill';
+                pill.textContent = item;
+                stackWrap.appendChild(pill);
             });
-            main.appendChild(metricsWrap);
-        }
-
-        row.appendChild(main);
-        row.appendChild(buildStackColumn(project));
-        row.appendChild(buildLinksColumn(project));
-
-        return row;
-    }
-
-    function buildStackColumn(project) {
-        const stackWrapper = document.createElement('div');
-        stackWrapper.className = 'project-built-with';
-        const stackItems = (project.stack && project.stack.length ? project.stack : project.tags || []).slice(0, 8);
-
-        if (!stackItems.length) {
+        } else {
             const pill = document.createElement('span');
             pill.className = 'stack-pill muted';
-            pill.textContent = 'Coming soon';
-            stackWrapper.appendChild(pill);
-            return stackWrapper;
+            pill.textContent = 'No languages';
+            stackWrap.appendChild(pill);
+        }
+        card.appendChild(stackWrap);
+
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'card-actions';
+
+        const exploreBtn = document.createElement('button');
+        exploreBtn.type = 'button';
+        exploreBtn.className = 'project-link-btn explore-btn';
+        exploreBtn.innerHTML = '<i class="fas fa-book-open"></i> Explore details';
+        exploreBtn.addEventListener('click', () => openExploreModal(project.repoName, project.websiteUrl));
+        actions.appendChild(exploreBtn);
+
+        if (project.htmlUrl) {
+            const githubBtn = document.createElement('a');
+            githubBtn.className = 'project-link-btn github-btn';
+            githubBtn.href = project.htmlUrl;
+            githubBtn.target = '_blank';
+            githubBtn.rel = 'noopener';
+            githubBtn.innerHTML = '<i class="fab fa-github"></i> View on GitHub';
+            actions.appendChild(githubBtn);
         }
 
-        stackItems.forEach(item => {
+        card.appendChild(actions);
+        return card;
+    }
+
+    function buildArtCard(project, index) {
+        const card = document.createElement('div');
+        card.className = 'project-card art-card';
+        card.setAttribute('role', 'listitem');
+        card.style.animationDelay = `${index * 0.06}s`;
+        card.addEventListener('click', () => openImageModal(project.previewUrl, project.title));
+
+        // Preview image
+        if (project.previewUrl) {
+            const img = document.createElement('img');
+            img.className = 'card-preview';
+            img.src = project.previewUrl;
+            img.alt = project.title;
+            img.loading = 'lazy';
+            card.appendChild(img);
+        }
+
+        const title = document.createElement('h3');
+        title.className = 'card-title';
+        title.textContent = project.title;
+        card.appendChild(title);
+
+        if (project.description) {
+            const desc = document.createElement('p');
+            desc.className = 'card-description';
+            desc.textContent = project.description;
+            card.appendChild(desc);
+        }
+
+        // Stack pills
+        const stackWrap = document.createElement('div');
+        stackWrap.className = 'card-stack';
+        (project.stack || []).forEach(item => {
             const pill = document.createElement('span');
             pill.className = 'stack-pill';
             pill.textContent = item;
-            stackWrapper.appendChild(pill);
+            stackWrap.appendChild(pill);
         });
+        card.appendChild(stackWrap);
 
-        return stackWrapper;
+        return card;
     }
 
-    function buildLinksColumn(project) {
-        const linksWrapper = document.createElement('div');
-        linksWrapper.className = 'project-links';
-        const links = project.links || [];
+    function buildDocCard(project, index) {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.setAttribute('role', 'listitem');
+        card.style.animationDelay = `${index * 0.06}s`;
 
-        if (!links.length) {
-            const placeholder = document.createElement('span');
-            placeholder.className = 'project-links-empty';
-            placeholder.textContent = 'Links coming soon';
-            linksWrapper.appendChild(placeholder);
-            return linksWrapper;
+        const title = document.createElement('h3');
+        title.className = 'card-title';
+        title.textContent = project.title;
+        card.appendChild(title);
+
+        if (project.description) {
+            const desc = document.createElement('p');
+            desc.className = 'card-description';
+            desc.textContent = project.description;
+            card.appendChild(desc);
         }
 
-        links.forEach(link => {
-            if (link.type === 'modal-image') {
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'project-link-btn';
-                button.textContent = link.label;
-                button.addEventListener('click', () => openModal(link.url, project.title));
-                linksWrapper.appendChild(button);
-            } else if (link.url) {
+        // Stack pills
+        const stackWrap = document.createElement('div');
+        stackWrap.className = 'card-stack';
+        (project.stack || []).forEach(item => {
+            const pill = document.createElement('span');
+            pill.className = 'stack-pill';
+            pill.textContent = item;
+            stackWrap.appendChild(pill);
+        });
+        card.appendChild(stackWrap);
+
+        // Action links
+        const actions = document.createElement('div');
+        actions.className = 'card-actions';
+
+        (project.links || []).forEach(link => {
+            if (link.url) {
                 const anchor = document.createElement('a');
-                anchor.className = 'project-link-btn';
+                anchor.className = 'project-link-btn github-btn';
                 anchor.href = link.url;
                 anchor.target = '_blank';
                 anchor.rel = 'noopener';
                 anchor.textContent = link.label;
-                linksWrapper.appendChild(anchor);
+                actions.appendChild(anchor);
             }
         });
 
-        return linksWrapper;
+        card.appendChild(actions);
+        return card;
     }
 
-    function renderRows(category, projects) {
+    // ========== Explore Modal ==========
+    function openExploreModal(repoName, websiteUrl) {
+        if (!exploreModal) return;
+        exploreTitle.textContent = repoName;
+        exploreBody.innerHTML = '<div class="readme-loading"><i class="fas fa-spinner fa-spin"></i> Loading README...</div>';
+        exploreFooter.innerHTML = '';
+        exploreModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        loadExploreContent(repoName, websiteUrl);
+    }
+
+    function closeExploreModal() {
+        if (!exploreModal) return;
+        exploreModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    async function loadExploreContent(repoName, websiteUrl) {
+        // Fetch README and latest release in parallel
+        const [readmeHtml, releaseData] = await Promise.allSettled([
+            fetchReadmeHtml(repoName),
+            fetchLatestRelease(repoName)
+        ]);
+
+        // Render README
+        if (readmeHtml.status === 'fulfilled' && readmeHtml.value) {
+            exploreBody.innerHTML = `<div class="readme-content">${readmeHtml.value}</div>`;
+        } else {
+            exploreBody.innerHTML = '<div class="readme-loading">No README found for this project.</div>';
+        }
+
+        // Build actions
+        let actionsHtml = '';
+        if (releaseData.status === 'fulfilled' && releaseData.value) {
+            const release = releaseData.value;
+            actionsHtml += `
+                <div class="release-info">
+                    <h3><i class="fas fa-tag"></i> Latest Release: ${escapeHtml(release.tag_name || release.name || 'Unknown')}</h3>
+                    <p class="release-meta">Published ${formatDate(release.published_at)}</p>
+                    ${release.body ? `<div class="release-body">${escapeHtml(release.body).replace(/\n/g, '<br>')}</div>` : ''}
+                </div>
+            `;
+        } else {
+            actionsHtml += '<p class="no-release">No releases published yet.</p>';
+        }
+
+        actionsHtml += '<div class="explore-actions">';
+        if (websiteUrl) {
+            actionsHtml += `<a href="${websiteUrl}" target="_blank" rel="noopener" class="explore-btn-action download-btn"><i class="fas fa-globe"></i> Visit Website</a>`;
+        }
+        if (releaseData.status === 'fulfilled' && releaseData.value) {
+            actionsHtml += `<a href="${releaseData.value.html_url}" target="_blank" rel="noopener" class="explore-btn-action download-btn"><i class="fas fa-download"></i> Download Release</a>`;
+        }
+        actionsHtml += `<a href="https://github.com/${username}/${repoName}/releases" target="_blank" rel="noopener" class="explore-btn-action releases-btn"><i class="fab fa-github"></i> All Releases</a>`;
+        actionsHtml += '</div>';
+
+        exploreFooter.innerHTML = actionsHtml;
+    }
+
+    async function fetchReadmeHtml(repoName) {
+        const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/readme`, {
+            headers: { 'Accept': 'application/vnd.github.html+json' }
+        });
+        if (!resp.ok) return null;
+        return await resp.text();
+    }
+
+    async function fetchLatestRelease(repoName) {
+        const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/releases/latest`);
+        if (!resp.ok) return null;
+        return await resp.json();
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ========== Image Modal ==========
+    function openImageModal(src, altText) {
+        if (!imageModal || !modalImage || !src) return;
+        modalImage.src = src;
+        modalImage.alt = altText || 'Artwork preview';
+        imageModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageModal() {
+        if (!imageModal) return;
+        imageModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // ========== Render ==========
+    function renderCards(category, projects, builderFn) {
         const ref = sectionRefs[category];
         if (!ref || !ref.list) return;
-        const filtered = filterProjects(projects);
+        const filtered = projects.filter(matchesSearch);
         ref.list.innerHTML = '';
 
         if (!filtered.length) {
@@ -299,127 +463,92 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        filtered.forEach(project => {
-            ref.list.appendChild(buildProjectRow(project));
+        filtered.forEach((project, i) => {
+            ref.list.appendChild(builderFn(project, i));
         });
     }
 
     function renderAllSections() {
-        renderRows('programming', programmingProjects);
-        renderRows('art', artProjects);
-        renderRows('documentation', docProjects);
+        renderCards('programming', programmingProjects, buildProgrammingCard);
+        renderCards('art', artProjects, buildArtCard);
+        renderCards('documentation', docProjects, buildDocCard);
     }
 
-    function openModal(src, altText) {
-        if (!imageModal || !modalImage || !src) return;
-        modalImage.src = src;
-        modalImage.alt = altText || 'Artwork preview';
-        imageModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    // ========== Event Listeners ==========
+    if (modalClose) modalClose.addEventListener('click', closeImageModal);
+    const imgOverlay = imageModal ? imageModal.querySelector('.modal-overlay') : null;
+    if (imgOverlay) imgOverlay.addEventListener('click', closeImageModal);
 
-    function closeModal() {
-        if (!imageModal) return;
-        imageModal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    if (modalClose) {
-        modalClose.addEventListener('click', closeModal);
-    }
-
-    const modalOverlay = imageModal ? imageModal.querySelector('.modal-overlay') : null;
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', closeModal);
-    }
+    if (exploreClose) exploreClose.addEventListener('click', closeExploreModal);
+    if (exploreOverlay) exploreOverlay.addEventListener('click', closeExploreModal);
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && imageModal?.classList.contains('active')) {
-            closeModal();
+        if (e.key === 'Escape') {
+            if (exploreModal?.classList.contains('active')) closeExploreModal();
+            if (imageModal?.classList.contains('active')) closeImageModal();
         }
     });
 
+    // ========== Load GitHub Projects ==========
     async function loadProjects() {
         try {
-            const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=${MAX_PROGRAMMING_REPOS}&sort=updated`);
-            if (!response.ok) {
-                throw new Error('Unable to load GitHub repositories.');
-            }
+            const resp = await fetch(`https://api.github.com/users/${username}/repos?per_page=${MAX_PROGRAMMING_REPOS}&sort=updated`);
+            if (!resp.ok) throw new Error('Unable to load GitHub repositories.');
 
-            const repos = await response.json();
-            if (!Array.isArray(repos)) {
-                throw new Error(repos?.message || 'Unexpected GitHub API response.');
-            }
-            const limitedRepos = repos.slice(0, MAX_PROGRAMMING_REPOS);
-            const programmingData = await Promise.all(
-                limitedRepos.map(async (repo, index) => {
-                    let languages = [];
-                    let pagesUrl = null;
-                    const needsDetailedInfo = index < MAX_DETAILED_REQUESTS;
+            const repos = await resp.json();
+            if (!Array.isArray(repos)) throw new Error(repos?.message || 'Unexpected API response.');
 
-                    if (needsDetailedInfo) {
-                        [languages, pagesUrl] = await Promise.all([
+            const limited = repos.slice(0, MAX_PROGRAMMING_REPOS);
+
+            // Fetch detailed data in parallel batches of 5 to avoid rate limits
+            const batchSize = 5;
+            const results = [];
+            for (let i = 0; i < limited.length; i += batchSize) {
+                const batch = limited.slice(i, i + batchSize);
+                const batchResults = await Promise.all(
+                    batch.map(async (repo) => {
+                        const [languages, pagesUrl, commitCount] = await Promise.all([
                             getRepoLanguages(repo.name),
-                            getRepoPagesUrl(repo.name)
+                            getRepoPagesUrl(repo.name),
+                            getCommitCount(repo.name)
                         ]);
-                    } else {
-                        if (repo.language) {
-                            languages = [repo.language];
-                        }
-                        if (repo.has_pages) {
-                            pagesUrl = `https://${username}.github.io/${repo.name}/`;
-                        }
-                    }
 
-                    if (!languages.length && repo.language) {
-                        languages = [repo.language];
-                    }
+                        const allLangs = languages.length ? languages : (repo.language ? [repo.language] : []);
+                        const websiteUrl = pagesUrl || null;
 
-                    const stack = languages.slice(0, 6);
-                    const tags = ['github', ...languages.map(l => l.toLowerCase())];
-                    const homepageUrl = normalizeWebsiteUrl(repo.homepage);
-                    const websiteUrl = pagesUrl || homepageUrl;
+                        return {
+                            title: repo.name,
+                            repoName: repo.name,
+                            description: repo.description || 'No description available yet.',
+                            category: 'programming',
+                            stack: allLangs.slice(0, 6),
+                            tags: ['github', ...allLangs.map(l => l.toLowerCase())],
+                            stars: repo.stargazers_count,
+                            commitCount,
+                            lastCommitDate: formatDate(repo.pushed_at),
+                            htmlUrl: repo.html_url,
+                            websiteUrl
+                        };
+                    })
+                );
+                results.push(...batchResults);
+            }
 
-                    const links = [];
-                    if (websiteUrl) {
-                        links.push({ label: 'Visit Website', url: websiteUrl });
-                    }
-                    links.push({ label: 'View Source', url: repo.html_url });
-
-                    return {
-                        title: repo.name,
-                        description: repo.description || 'No description available yet.',
-                        category: 'programming',
-                        stack,
-                        tags,
-                        links,
-                        metrics: [
-                            { icon: 'fas fa-star', value: repo.stargazers_count, label: 'stars' },
-                            { icon: 'fas fa-code-branch', value: repo.forks_count, label: 'forks' }
-                        ],
-                        meta: formatUpdatedDate(repo.updated_at)
-                    };
-                })
-            );
-
-            programmingProjects = programmingData.sort((a, b) => {
-                const starsA = a.metrics?.[0]?.value || 0;
-                const starsB = b.metrics?.[0]?.value || 0;
-                return starsB - starsA;
-            });
+            programmingProjects = results.sort((a, b) => b.stars - a.stars);
             setSectionMessage('programming', '');
-            renderRows('programming', programmingProjects);
+            renderCards('programming', programmingProjects, buildProgrammingCard);
         } catch (error) {
             console.error('Error loading projects:', error);
             setSectionMessage(
                 'programming',
-                '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Unable to load GitHub repositories right now. Showing curated projects only.'
+                '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories. Showing curated projects only.'
             );
             programmingProjects = [];
-            renderRows('programming', programmingProjects);
+            renderCards('programming', programmingProjects, buildProgrammingCard);
         }
     }
 
+    // Initial render
     renderAllSections();
     loadProjects();
 });
