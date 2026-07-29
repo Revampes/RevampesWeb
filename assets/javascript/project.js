@@ -106,6 +106,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ========== Helpers ==========
+    const CACHE_PREFIX = 'gh_cache_';
+    const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+    function getCache(key) {
+        try {
+            const entry = JSON.parse(sessionStorage.getItem(CACHE_PREFIX + key));
+            if (!entry || Date.now() - entry.t > CACHE_TTL) {
+                sessionStorage.removeItem(CACHE_PREFIX + key);
+                return null;
+            }
+            return entry;
+        } catch { return null; }
+    }
+
+    function setCache(key, data, etag) {
+        try {
+            sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ d: data, e: etag, t: Date.now() }));
+        } catch { /* storage full, ignore */ }
+    }
+
+    async function cachedFetch(url, options = {}) {
+        const cacheKey = url.replace(/[^a-z0-9]/gi, '_').substring(0, 80);
+
+        // Check cache first (data + ETag)
+        const cached = getCache(cacheKey);
+        const headers = { ...(options.headers || {}) };
+        if (cached?.e) headers['If-None-Match'] = cached.e;
+
+        let resp;
+        let retries = 0;
+        const maxRetries = 3;
+
+        while (retries <= maxRetries) {
+            resp = await fetch(url, { ...options, headers });
+
+            // 304 Not Modified — use cached data
+            if (resp.status === 304 && cached) {
+                return cached.d;
+            }
+
+            // 403 rate limited — backoff and retry
+            if (resp.status === 403 && retries < maxRetries) {
+                const wait = Math.pow(2, retries) * 2000; // 2s, 4s, 8s
+                console.warn(`Rate limited, retrying in ${wait / 1000}s...`);
+                await new Promise(r => setTimeout(r, wait));
+                retries++;
+                continue;
+            }
+
+            break;
+        }
+
+        if (!resp.ok) return null;
+
+        // Cache the response
+        const etag = resp.headers.get('ETag') || resp.headers.get('etag');
+        const contentType = resp.headers.get('Content-Type') || '';
+
+        let data;
+        if (contentType.includes('application/json')) {
+            data = await resp.json();
+        } else {
+            data = await resp.text();
+        }
+
+        setCache(cacheKey, data, etag);
+        return data;
+    }
+
     function formatDate(value) {
         if (!value) return 'N/A';
         const date = new Date(value);
@@ -121,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const match = linkHeader.match(/[&?]page=(\d+)>;\s*rel="last"/);
                 if (match) return parseInt(match[1], 10);
             }
-            // Fallback: count from the array if Link header is absent (small repos)
             const commits = await resp.json();
             return Array.isArray(commits) ? commits.length : 0;
         } catch {
@@ -130,24 +198,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getRepoLanguages(repoName) {
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/languages`);
-            const languages = await resp.json();
-            return Object.keys(languages);
-        } catch {
-            return [];
-        }
+        const data = await cachedFetch(`https://api.github.com/repos/${username}/${repoName}/languages`);
+        return data ? Object.keys(data) : [];
     }
 
     async function getRepoPagesUrl(repoName) {
-        try {
-            const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
-            if (!resp.ok) return null;
-            const data = await resp.json();
-            return data.html_url || null;
-        } catch {
-            return null;
-        }
+        const data = await cachedFetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
+        return data?.html_url || null;
     }
 
     function setSectionMessage(category, message) {
@@ -412,17 +469,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchReadmeHtml(repoName) {
-        const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/readme`, {
+        return await cachedFetch(`https://api.github.com/repos/${username}/${repoName}/readme`, {
             headers: { 'Accept': 'application/vnd.github.html+json' }
         });
-        if (!resp.ok) return null;
-        return await resp.text();
     }
 
     async function fetchLatestRelease(repoName) {
-        const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/releases/latest`);
-        if (!resp.ok) return null;
-        return await resp.json();
+        return await cachedFetch(`https://api.github.com/repos/${username}/${repoName}/releases/latest`);
     }
 
     function escapeHtml(str) {
@@ -492,46 +545,55 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== Load GitHub Projects ==========
     async function loadProjects() {
         try {
-            const resp = await fetch(`https://api.github.com/users/${username}/repos?per_page=${MAX_PROGRAMMING_REPOS}&sort=updated`);
-            if (!resp.ok) throw new Error('Unable to load GitHub repositories.');
-
-            const repos = await resp.json();
-            if (!Array.isArray(repos)) throw new Error(repos?.message || 'Unexpected API response.');
+            const repos = await cachedFetch(
+                `https://api.github.com/users/${username}/repos?per_page=${MAX_PROGRAMMING_REPOS}&sort=updated`
+            );
+            if (!repos || !Array.isArray(repos)) throw new Error('Unable to load GitHub repositories.');
 
             const limited = repos.slice(0, MAX_PROGRAMMING_REPOS);
 
-            // Fetch detailed data in parallel batches of 5 to avoid rate limits
-            const batchSize = 5;
+            // Fetch detailed data sequentially with a small stagger to avoid bursts
             const results = [];
-            for (let i = 0; i < limited.length; i += batchSize) {
-                const batch = limited.slice(i, i + batchSize);
-                const batchResults = await Promise.all(
-                    batch.map(async (repo) => {
-                        const [languages, pagesUrl, commitCount] = await Promise.all([
-                            getRepoLanguages(repo.name),
-                            getRepoPagesUrl(repo.name),
-                            getCommitCount(repo.name)
-                        ]);
+            for (const repo of limited) {
+                try {
+                    const [languages, pagesUrl, commitCount] = await Promise.all([
+                        getRepoLanguages(repo.name),
+                        getRepoPagesUrl(repo.name),
+                        getCommitCount(repo.name)
+                    ]);
 
-                        const allLangs = languages.length ? languages : (repo.language ? [repo.language] : []);
-                        const websiteUrl = pagesUrl || null;
-
-                        return {
-                            title: repo.name,
-                            repoName: repo.name,
-                            description: repo.description || 'No description available yet.',
-                            category: 'programming',
-                            stack: allLangs.slice(0, 6),
-                            tags: ['github', ...allLangs.map(l => l.toLowerCase())],
-                            stars: repo.stargazers_count,
-                            commitCount,
-                            lastCommitDate: formatDate(repo.pushed_at),
-                            htmlUrl: repo.html_url,
-                            websiteUrl
-                        };
-                    })
-                );
-                results.push(...batchResults);
+                    const allLangs = languages.length ? languages : (repo.language ? [repo.language] : []);
+                    results.push({
+                        title: repo.name,
+                        repoName: repo.name,
+                        description: repo.description || 'No description available yet.',
+                        category: 'programming',
+                        stack: allLangs.slice(0, 6),
+                        tags: ['github', ...allLangs.map(l => l.toLowerCase())],
+                        stars: repo.stargazers_count,
+                        commitCount,
+                        lastCommitDate: formatDate(repo.pushed_at),
+                        htmlUrl: repo.html_url,
+                        websiteUrl: pagesUrl || null
+                    });
+                } catch {
+                    // Single repo failed, continue with basic info
+                    results.push({
+                        title: repo.name,
+                        repoName: repo.name,
+                        description: repo.description || 'No description available yet.',
+                        category: 'programming',
+                        stack: repo.language ? [repo.language] : [],
+                        tags: ['github', ...(repo.language ? [repo.language.toLowerCase()] : [])],
+                        stars: repo.stargazers_count,
+                        commitCount: 0,
+                        lastCommitDate: formatDate(repo.pushed_at),
+                        htmlUrl: repo.html_url,
+                        websiteUrl: null
+                    });
+                }
+                // Small stagger between repos to be gentle on the API
+                await new Promise(r => setTimeout(r, 200));
             }
 
             programmingProjects = results.sort((a, b) => b.stars - a.stars);
@@ -541,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading projects:', error);
             setSectionMessage(
                 'programming',
-                '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories. Showing curated projects only.'
+                '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories right now. Try again shortly.'
             );
             programmingProjects = [];
             renderCards('programming', programmingProjects, buildProgrammingCard);
