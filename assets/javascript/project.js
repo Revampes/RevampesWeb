@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let programmingProjects = [];
+    const programmingProjectMap = new Map();
+    const programmingMetadataPromises = new Map();
     let searchQuery = '';
 
     const artProjects = [
@@ -129,6 +131,21 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch { /* storage full, ignore */ }
     }
 
+    function getSessionValue(key) {
+        try {
+            const raw = sessionStorage.getItem(CACHE_PREFIX + key);
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    }
+
+    function setSessionValue(key, data) {
+        try {
+            sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify(data));
+        } catch { /* storage full, ignore */ }
+    }
+
     async function cachedFetch(url, options = {}) {
         const cacheKey = url.replace(/[^a-z0-9]/gi, '_').substring(0, 80);
 
@@ -194,15 +211,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getCommitCount(repoName) {
+        const cacheKey = `commit_count_${repoName}`;
+        const cached = getSessionValue(cacheKey);
+        if (cached?.value !== undefined) {
+            return cached.value;
+        }
+
         try {
             const resp = await fetch(`https://api.github.com/repos/${username}/${repoName}/commits?per_page=1`);
             const linkHeader = resp.headers.get('Link');
+            let count = 0;
             if (linkHeader) {
                 const match = linkHeader.match(/[&?]page=(\d+)>;\s*rel="last"/);
-                if (match) return parseInt(match[1], 10);
+                if (match) count = parseInt(match[1], 10);
             }
             const commits = await resp.json();
-            return Array.isArray(commits) ? commits.length : 0;
+            if (!count) {
+                count = Array.isArray(commits) ? commits.length : 0;
+            }
+            setSessionValue(cacheKey, { value: count, t: Date.now() });
+            return count;
         } catch {
             return 0;
         }
@@ -216,6 +244,69 @@ document.addEventListener('DOMContentLoaded', () => {
     async function getRepoPagesUrl(repoName) {
         const data = await cachedFetch(`https://api.github.com/repos/${username}/${repoName}/pages`);
         return data?.html_url || null;
+    }
+
+    function getProgrammingProject(repoName) {
+        return programmingProjectMap.get(repoName) || null;
+    }
+
+    function updateProgrammingCard(project) {
+        const refs = project.cardRefs;
+        if (!refs) return;
+
+        if (refs.commitValue) {
+            refs.commitValue.textContent = Number.isFinite(project.commitCount) ? String(project.commitCount) : 'N/A';
+        }
+
+        if (refs.stackWrap) {
+            refs.stackWrap.innerHTML = '';
+            const languages = Array.isArray(project.languages) && project.languages.length
+                ? project.languages
+                : (Array.isArray(project.stack) ? project.stack : []);
+
+            if (languages.length) {
+                languages.forEach(language => {
+                    const pill = document.createElement('span');
+                    pill.className = 'stack-pill';
+                    pill.textContent = language;
+                    refs.stackWrap.appendChild(pill);
+                });
+            } else {
+                const pill = document.createElement('span');
+                pill.className = 'stack-pill muted';
+                pill.textContent = 'No languages';
+                refs.stackWrap.appendChild(pill);
+            }
+        }
+    }
+
+    function ensureProgrammingMetadata(project) {
+        if (!project?.repoName) return Promise.resolve(project);
+        if (programmingMetadataPromises.has(project.repoName)) {
+            return programmingMetadataPromises.get(project.repoName);
+        }
+
+        const promise = (async () => {
+            const [languages, commitCount] = await Promise.all([
+                getRepoLanguages(project.repoName),
+                getCommitCount(project.repoName)
+            ]);
+
+            if (Array.isArray(languages) && languages.length) {
+                project.languages = languages;
+            }
+            if (Number.isFinite(commitCount)) {
+                project.commitCount = commitCount;
+            }
+
+            updateProgrammingCard(project);
+            return project;
+        })().catch(() => project).finally(() => {
+            programmingMetadataPromises.delete(project.repoName);
+        });
+
+        programmingMetadataPromises.set(project.repoName, promise);
+        return promise;
     }
 
     function setSectionMessage(category, message) {
@@ -286,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Stack pills
         const stackWrap = document.createElement('div');
         stackWrap.className = 'card-stack';
-        const stackItems = (project.stack && project.stack.length ? project.stack : []).slice(0, 6);
+        const stackItems = (Array.isArray(project.languages) && project.languages.length ? project.languages : (project.stack || [])).slice();
         if (stackItems.length) {
             stackItems.forEach(item => {
                 const pill = document.createElement('span');
@@ -301,6 +392,13 @@ document.addEventListener('DOMContentLoaded', () => {
             stackWrap.appendChild(pill);
         }
         card.appendChild(stackWrap);
+
+        project.cardRefs = {
+            commitValue: commitsRow.querySelector('.meta-value'),
+            stackWrap
+        };
+
+        ensureProgrammingMetadata(project);
 
         // Actions
         const actions = document.createElement('div');
@@ -438,6 +536,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadExploreContent(repoName, websiteUrl) {
+        const project = getProgrammingProject(repoName);
+
         // Fetch README and latest release in parallel
         const [readmeHtml, releaseData] = await Promise.allSettled([
             fetchReadmeHtml(repoName),
@@ -446,7 +546,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render README
         if (readmeHtml.status === 'fulfilled' && readmeHtml.value) {
-            exploreBody.innerHTML = `<div class="readme-content">${readmeHtml.value}</div>`;
+            const rewrittenReadme = rewriteReadmeHtml(readmeHtml.value, repoName);
+            exploreBody.innerHTML = `<div class="readme-content">${rewrittenReadme}</div>`;
         } else {
             exploreBody.innerHTML = '<div class="readme-loading">No README found for this project.</div>';
         }
@@ -479,24 +580,26 @@ document.addEventListener('DOMContentLoaded', () => {
         exploreFooter.innerHTML = actionsHtml;
 
         // Lazily fetch and display extra details to avoid many initial API requests
+        const metadataPromise = project ? ensureProgrammingMetadata(project) : Promise.all([getRepoLanguages(repoName), getCommitCount(repoName)]);
+
         (async () => {
             try {
-                const languages = await getRepoLanguages(repoName);
+                const resolvedProject = project ? await metadataPromise : null;
+                const languages = resolvedProject?.languages || (project?.languages ?? []);
+                const commitCount = resolvedProject?.commitCount ?? project?.commitCount ?? null;
+
                 if (languages && languages.length) {
-                    const langList = languages.slice(0, 6).map(l => `<span class="stack-pill">${escapeHtml(l)}</span>`).join(' ');
+                    const langList = languages.map(l => `<span class="stack-pill">${escapeHtml(l)}</span>`).join(' ');
                     const langHtml = `<div class="explore-languages"><strong>Languages:</strong> ${langList}</div>`;
                     exploreBody.insertAdjacentHTML('afterbegin', langHtml);
                 }
-            } catch (e) {
-                // ignore language fetch errors
-            }
 
-            try {
-                const commitCount = await getCommitCount(repoName);
-                const commitInfo = `<div class="explore-commits"><strong>Commits:</strong> ${commitCount}</div>`;
-                exploreBody.insertAdjacentHTML('beforeend', commitInfo);
+                if (Number.isFinite(commitCount)) {
+                    const commitInfo = `<div class="explore-commits"><strong>Commits:</strong> ${commitCount}</div>`;
+                    exploreBody.insertAdjacentHTML('beforeend', commitInfo);
+                }
             } catch (e) {
-                // ignore commit fetch errors
+                // ignore metadata fetch errors
             }
         })();
     }
@@ -505,6 +608,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return await cachedFetch(`https://api.github.com/repos/${username}/${repoName}/readme`, {
             headers: { 'Accept': 'application/vnd.github.html+json' }
         });
+    }
+
+    function rewriteReadmeHtml(html, repoName) {
+        if (typeof html !== 'string' || !html.trim()) return html;
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const rawBase = `https://raw.githubusercontent.com/${username}/${repoName}/HEAD/`;
+        const blobBase = `https://github.com/${username}/${repoName}/blob/HEAD/`;
+
+        doc.querySelectorAll('img').forEach(img => {
+            const src = img.getAttribute('src');
+            if (!src || /^(https?:|data:|blob:|cid:)/i.test(src)) return;
+            try {
+                img.src = new URL(src, rawBase).href;
+            } catch {
+                img.src = `${rawBase}${src.replace(/^\.\//, '').replace(/^\//, '')}`;
+            }
+        });
+
+        doc.querySelectorAll('a').forEach(anchor => {
+            const href = anchor.getAttribute('href');
+            if (!href || /^(https?:|mailto:|tel:|data:|#|javascript:)/i.test(href)) return;
+            try {
+                anchor.href = new URL(href, blobBase).href;
+            } catch {
+                anchor.href = `${blobBase}${href.replace(/^\.\//, '').replace(/^\//, '')}`;
+            }
+        });
+
+        return doc.body.innerHTML;
     }
 
     async function fetchLatestRelease(repoName) {
@@ -595,10 +729,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     repoName: repo.name,
                     description: repo.description || 'No description available yet.',
                     category: 'programming',
-                    stack: primaryLang.slice(0, 6),
+                    stack: primaryLang.slice(),
+                    languages: primaryLang.slice(),
                     tags: ['github', ...(primaryLang.length ? [primaryLang[0].toLowerCase()] : [])],
                     stars: repo.stargazers_count,
-                    commitCount: '...', // lazily loaded
+                    commitCount: null,
                     lastCommitDate: formatDate(repo.pushed_at),
                     htmlUrl: repo.html_url,
                     websiteUrl
@@ -606,8 +741,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             programmingProjects = results.sort((a, b) => b.stars - a.stars);
+            programmingProjectMap.clear();
+            programmingProjects.forEach(project => {
+                programmingProjectMap.set(project.repoName, project);
+            });
             setSectionMessage('programming', '');
             renderCards('programming', programmingProjects, buildProgrammingCard);
+            programmingProjects.forEach(project => {
+                ensureProgrammingMetadata(project);
+            });
         } catch (error) {
             console.error('Error loading projects:', error);
             // Surface GitHub rate limit reset time if available

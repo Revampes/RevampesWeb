@@ -37,14 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
         radius: 120
     };
 
-    // Add mouse event listeners to canvas
-    canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
+    function updateMousePosition(e) {
+        const rect = hero.getBoundingClientRect();
         mouse.x = e.clientX - rect.left;
         mouse.y = e.clientY - rect.top;
-    });
+    }
 
-    canvas.addEventListener('mouseleave', () => {
+    // Listen on the wrapper so overlays and titles still drive the particle effect.
+    hero.addEventListener('mousemove', updateMousePosition);
+    hero.addEventListener('mouseleave', () => {
         mouse.x = null;
         mouse.y = null;
     });
