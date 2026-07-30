@@ -3,6 +3,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const username = 'Revampes';
     const MAX_PROGRAMMING_REPOS = 21;
+    // Optional: include a GitHub personal access token via a meta tag
+    // <meta name="github-token" content="ghp_..."> — increases rate limits for this page
+    const GITHUB_TOKEN = document.querySelector('meta[name="github-token"]')?.content || null;
     const searchInput = document.getElementById('repo-search');
     const sectionRefs = {
         programming: {
@@ -133,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cached = getCache(cacheKey);
         const headers = { ...(options.headers || {}) };
         if (cached?.e) headers['If-None-Match'] = cached.e;
+        if (GITHUB_TOKEN) headers['Authorization'] = `token ${GITHUB_TOKEN}`;
 
         let resp;
         let retries = 0;
@@ -146,13 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 return cached.d;
             }
 
-            // 403 rate limited — backoff and retry
-            if (resp.status === 403 && retries < maxRetries) {
-                const wait = Math.pow(2, retries) * 2000; // 2s, 4s, 8s
-                console.warn(`Rate limited, retrying in ${wait / 1000}s...`);
-                await new Promise(r => setTimeout(r, wait));
-                retries++;
-                continue;
+            // 403 — could be rate limited. If GitHub reports zero remaining, abort and surface reset time.
+            if (resp.status === 403) {
+                const remaining = resp.headers.get('X-RateLimit-Remaining') || resp.headers.get('x-ratelimit-remaining');
+                const reset = resp.headers.get('X-RateLimit-Reset') || resp.headers.get('x-ratelimit-reset');
+                if (remaining === '0') {
+                    throw new Error(`RATE_LIMIT:${reset || ''}`);
+                }
+                if (retries < maxRetries) {
+                    const wait = Math.pow(2, retries) * 2000; // 2s, 4s, 8s
+                    console.warn(`Rate limited, retrying in ${wait / 1000}s...`);
+                    await new Promise(r => setTimeout(r, wait));
+                    retries++;
+                    continue;
+                }
             }
 
             break;
@@ -466,6 +477,28 @@ document.addEventListener('DOMContentLoaded', () => {
         actionsHtml += '</div>';
 
         exploreFooter.innerHTML = actionsHtml;
+
+        // Lazily fetch and display extra details to avoid many initial API requests
+        (async () => {
+            try {
+                const languages = await getRepoLanguages(repoName);
+                if (languages && languages.length) {
+                    const langList = languages.slice(0, 6).map(l => `<span class="stack-pill">${escapeHtml(l)}</span>`).join(' ');
+                    const langHtml = `<div class="explore-languages"><strong>Languages:</strong> ${langList}</div>`;
+                    exploreBody.insertAdjacentHTML('afterbegin', langHtml);
+                }
+            } catch (e) {
+                // ignore language fetch errors
+            }
+
+            try {
+                const commitCount = await getCommitCount(repoName);
+                const commitInfo = `<div class="explore-commits"><strong>Commits:</strong> ${commitCount}</div>`;
+                exploreBody.insertAdjacentHTML('beforeend', commitInfo);
+            } catch (e) {
+                // ignore commit fetch errors
+            }
+        })();
     }
 
     async function fetchReadmeHtml(repoName) {
@@ -552,59 +585,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const limited = repos.slice(0, MAX_PROGRAMMING_REPOS);
 
-            // Fetch detailed data sequentially with a small stagger to avoid bursts
-            const results = [];
-            for (const repo of limited) {
-                try {
-                    const [languages, pagesUrl, commitCount] = await Promise.all([
-                        getRepoLanguages(repo.name),
-                        getRepoPagesUrl(repo.name),
-                        getCommitCount(repo.name)
-                    ]);
-
-                    const allLangs = languages.length ? languages : (repo.language ? [repo.language] : []);
-                    results.push({
-                        title: repo.name,
-                        repoName: repo.name,
-                        description: repo.description || 'No description available yet.',
-                        category: 'programming',
-                        stack: allLangs.slice(0, 6),
-                        tags: ['github', ...allLangs.map(l => l.toLowerCase())],
-                        stars: repo.stargazers_count,
-                        commitCount,
-                        lastCommitDate: formatDate(repo.pushed_at),
-                        htmlUrl: repo.html_url,
-                        websiteUrl: pagesUrl || null
-                    });
-                } catch {
-                    // Single repo failed, continue with basic info
-                    results.push({
-                        title: repo.name,
-                        repoName: repo.name,
-                        description: repo.description || 'No description available yet.',
-                        category: 'programming',
-                        stack: repo.language ? [repo.language] : [],
-                        tags: ['github', ...(repo.language ? [repo.language.toLowerCase()] : [])],
-                        stars: repo.stargazers_count,
-                        commitCount: 0,
-                        lastCommitDate: formatDate(repo.pushed_at),
-                        htmlUrl: repo.html_url,
-                        websiteUrl: null
-                    });
-                }
-                // Small stagger between repos to be gentle on the API
-                await new Promise(r => setTimeout(r, 200));
-            }
+            // Use only the repo list data initially to reduce API requests.
+            // Defer heavier per-repo requests (languages, pages, commit counts) until the user opens details.
+            const results = limited.map(repo => {
+                const primaryLang = repo.language ? [repo.language] : [];
+                const websiteUrl = repo.homepage || (repo.has_pages ? `https://${username}.github.io/${repo.name}` : null);
+                return {
+                    title: repo.name,
+                    repoName: repo.name,
+                    description: repo.description || 'No description available yet.',
+                    category: 'programming',
+                    stack: primaryLang.slice(0, 6),
+                    tags: ['github', ...(primaryLang.length ? [primaryLang[0].toLowerCase()] : [])],
+                    stars: repo.stargazers_count,
+                    commitCount: '...', // lazily loaded
+                    lastCommitDate: formatDate(repo.pushed_at),
+                    htmlUrl: repo.html_url,
+                    websiteUrl
+                };
+            });
 
             programmingProjects = results.sort((a, b) => b.stars - a.stars);
             setSectionMessage('programming', '');
             renderCards('programming', programmingProjects, buildProgrammingCard);
         } catch (error) {
             console.error('Error loading projects:', error);
-            setSectionMessage(
-                'programming',
-                '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories right now. Try again shortly.'
-            );
+            // Surface GitHub rate limit reset time if available
+            if (error && error.message && error.message.startsWith('RATE_LIMIT:')) {
+                const reset = error.message.split(':')[1];
+                const resetTime = reset ? new Date(parseInt(reset, 10) * 1000).toLocaleTimeString() : 'later';
+                setSectionMessage(
+                    'programming',
+                    `<i class="fas fa-exclamation-triangle"></i> GitHub API rate limit exceeded. Try again after ${resetTime} or add a personal access token via a meta tag (<meta name="github-token" content="YOUR_TOKEN">) to increase limits.`
+                );
+            } else {
+                setSectionMessage(
+                    'programming',
+                    '<i class="fas fa-exclamation-triangle"></i> Unable to load GitHub repositories right now. Try again shortly.'
+                );
+            }
             programmingProjects = [];
             renderCards('programming', programmingProjects, buildProgrammingCard);
         }
