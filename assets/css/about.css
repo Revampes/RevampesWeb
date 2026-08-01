@@ -695,3 +695,196 @@
 .skill.animated .skill-progress-fill {
     width: var(--progress, 100%);
 }
+
+/* =====================================================
+   NAVBAR CTA BUTTONS
+   ===================================================== */
+.nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+.cta-btn:hover {
+    transform: translateY(-2px);
+}
+
+.cta-primary {
+    background: var(--neon-color);
+    color: #000;
+    box-shadow: 0 4px 18px rgba(255, 110, 199, 0.4);
+}
+
+.cta-primary:hover {
+    background: #fff;
+    color: var(--neon-color);
+    box-shadow: 0 6px 24px rgba(255, 110, 199, 0.55);
+}
+
+.cta-ghost {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--neon-color);
+}
+
+.cta-ghost:hover {
+    background: var(--neon-color);
+    color: #000;
+    box-shadow: 0 4px 18px rgba(255, 110, 199, 0.4);
+}
+
+.light-mode .cta-primary {
+    color: #fff;
+}
+
+.light-mode .cta-primary:hover {
+    background: var(--neon-color);
+    color: #fff;
+}
+
+/* =====================================================
+   NEW ABOUT INFO SECTIONS (skills, education, facts, social)
+   ===================================================== */
+.info-section {
+    background: var(--box-bg);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin: 0 auto 2rem auto;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    backdrop-filter: blur(6px);
+    animation: fadeInUp 0.7s ease both;
+}
+
+.info-section-title {
+    color: var(--neon-color);
+    margin: 0 0 1.2rem 0;
+    font-size: 1.5rem;
+    text-shadow: 0 0 8px var(--neon-color, #ff6ec7);
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--neon-color);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    padding: 1rem;
+}
+
+.info-item h3 {
+    color: var(--text-color);
+    font-size: 1.15rem;
+    margin: 0 0 0.8rem 0;
+}
+
+.info-detail {
+    color: var(--text-color);
+    opacity: 0.85;
+    margin: 0.35rem 0;
+    font-size: 1.05rem;
+}
+
+.skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.skill-chip {
+    background: var(--box-bg);
+    border: 1px solid var(--neon-color);
+    color: var(--text-color);
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.skill-chip:hover {
+    background: var(--neon-color);
+    color: #000;
+    transform: translateY(-2px);
+}
+
+/* Social links */
+.social-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    background: var(--box-bg);
+    border: 1px solid var(--neon-color);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.social-link i {
+    font-size: 1.6rem;
+    color: var(--neon-color);
+    min-width: 1.8rem;
+    text-align: center;
+}
+
+.social-link span {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.social-link small {
+    margin-left: auto;
+    opacity: 0.7;
+    font-size: 0.85rem;
+}
+
+.social-link:hover {
+    background: var(--neon-color);
+    color: #000;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 110, 199, 0.4);
+}
+
+.social-link:hover i {
+    color: #000;
+}
+
+/* Responsive tweaks for info sections */
+@media (max-width: 768px) {
+    .info-section {
+        width: calc(100% - 2rem);
+        max-width: none;
+        padding: 1.5rem 1rem;
+        margin: 0 1rem 1.5rem 1rem;
+    }
+    
+    .nav-cta .cta-ghost {
+        display: none;
+    }
+}

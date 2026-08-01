@@ -709,6 +709,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ========== Overview Stats ==========
+    function updateOverviewStats(resultProjects) {
+        const repoStat = document.getElementById('stat-repos');
+        if (repoStat) repoStat.textContent = String(resultProjects.length || 0);
+
+        // Sum commit counts as they become available
+        const commitsStat = document.getElementById('stat-commits');
+        const refreshCommits = () => {
+            if (!commitsStat) return;
+            let total = 0;
+            let hasData = false;
+            programmingProjects.forEach(p => {
+                if (Number.isFinite(p.commitCount)) {
+                    total += p.commitCount;
+                    hasData = true;
+                }
+            });
+            if (hasData) commitsStat.textContent = String(total);
+        };
+        resultProjects.forEach(project => {
+            ensureProgrammingMetadata(project).then(refreshCommits);
+        });
+    }
+
     // ========== Load GitHub Projects ==========
     async function loadProjects() {
         try {
@@ -747,6 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             setSectionMessage('programming', '');
             renderCards('programming', programmingProjects, buildProgrammingCard);
+            updateOverviewStats(programmingProjects);
             programmingProjects.forEach(project => {
                 ensureProgrammingMetadata(project);
             });
